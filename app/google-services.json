@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1026629804794",
+    "project_id": "arena-d7432",
+    "storage_bucket": "arena-d7432.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026629804794:android:783f08dd066e2060ba9f43",
+        "android_client_info": {
+          "package_name": "com.example.arena"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026629804794-ag9bvjo3enk47d007p9l44g6436elvlo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.arena",
+            "certificate_hash": "dea4611cc6b7f431472f4fb8163e6bf5fb028040"
+          }
+        },
+        {
+          "client_id": "1026629804794-04bh3f9lmcpb0m3779li4aesv06t1rhf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhvxnkUxV3svNlPnG8qmOxz1v9Mporo3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026629804794-04bh3f9lmcpb0m3779li4aesv06t1rhf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
