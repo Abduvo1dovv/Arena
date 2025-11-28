@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource // <-- MUHIM
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.example.arena.R // <-- MUHIM
 import com.example.arena.model.Challenge
 import com.example.arena.ui.components.SlideToConfirmButton
 import com.example.arena.ui.theme.ArenaBlack
@@ -163,48 +165,60 @@ fun CreateChallengeScreen(navController: NavController) {
         )
 
         Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
+            // HEADER
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().statusBarsPadding()) {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Text("CREATE CONTRACT", color = Color.White, fontSize = 20.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(R.string.create_contract), // <--- TARJIMA
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.weight(1f))
                 Spacer(modifier = Modifier.width(48.dp))
             }
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            Text("MISSION OBJECTIVE", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            // MISSION
+            Text(stringResource(R.string.mission_objective), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp) // <--- TARJIMA
             Spacer(modifier = Modifier.height(8.dp))
             GlassTextField(value = title, onValueChange = { if (it.length <= 50) title = it }, placeholder = "e.g. 100 Pushups")
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text("DETAILS", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            // DETAILS
+            Text(stringResource(R.string.details), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp) // <--- TARJIMA
             Spacer(modifier = Modifier.height(8.dp))
             GlassTextField(value = description, onValueChange = { if (it.length <= 200) description = it }, placeholder = "Optional details...", isSingleLine = false, height = 100.dp)
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("MODE TYPE", color = ArenaGreen, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+            // MODE TYPE
+            Text(stringResource(R.string.mode_type), color = ArenaGreen, fontSize = 12.sp, fontFamily = FontFamily.Monospace) // <--- TARJIMA
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                ModeSelectionButton("ONE SHOT", Icons.Rounded.AccessTime, !isRecurring) { isRecurring = false; selectedDurationVal = 24 }
-                ModeSelectionButton("DAILY HABIT", Icons.Rounded.Repeat, isRecurring) { isRecurring = true; selectedDurationVal = 30 }
+                ModeSelectionButton(stringResource(R.string.one_shot), Icons.Rounded.AccessTime, !isRecurring) { isRecurring = false; selectedDurationVal = 24 } // <--- TARJIMA
+                ModeSelectionButton(stringResource(R.string.daily_habit), Icons.Rounded.Repeat, isRecurring) { isRecurring = true; selectedDurationVal = 30 } // <--- TARJIMA
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // DEADLINE & DURATION
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("DEADLINE", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(stringResource(R.string.deadline), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp) // <--- TARJIMA
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(modifier = Modifier.fillMaxWidth().height(56.dp).background(Color(0xFF1A1A1A), RoundedCornerShape(12.dp)).border(1.dp, Color(0xFF333333), RoundedCornerShape(12.dp)).clickable { timePickerDialog.show() }.padding(horizontal = 16.dp), contentAlignment = Alignment.CenterStart) {
                         Text(selectedTime, color = Color.White, fontSize = 16.sp, fontFamily = FontFamily.Monospace)
                     }
                 }
                 Column(modifier = Modifier.weight(1f)) {
+                    // DAYS or HOURS
                     Text(if (isRecurring) "DAYS" else "HOURS", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
@@ -223,8 +237,12 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
+            // BET AMOUNT
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text(if (isRecurring) "DAILY STAKE" else "BET AMOUNT", color = Color.White, fontWeight = FontWeight.Bold)
+                // DAILY STAKE or BET AMOUNT
+                val betText = if (isRecurring) stringResource(R.string.daily_stake) else stringResource(R.string.bet_amount) // <--- TARJIMA
+                Text(betText, color = Color.White, fontWeight = FontWeight.Bold)
+
                 Text("$${String.format("%.0f", betAmount)}", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -233,17 +251,18 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
+            // RISKS & REWARDS
             Box(modifier = Modifier.fillMaxWidth().background(Color(0xFF111111), RoundedCornerShape(16.dp)).border(1.dp, Color(0xFF222222), RoundedCornerShape(16.dp)).padding(20.dp)) {
                 Column {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("TOTAL RISK", color = Color.Gray, fontSize = 16.sp)
+                        Text(stringResource(R.string.total_risk), color = Color.Gray, fontSize = 16.sp) // <--- TARJIMA
                         Text("- $${totalBet}", color = ArenaRed, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Divider(color = Color(0xFF222222))
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text("POTENTIAL WIN", color = Color.Gray, fontSize = 16.sp)
+                        Text(stringResource(R.string.potential_win), color = Color.Gray, fontSize = 16.sp) // <--- TARJIMA
                         Text("+ $${potentialReward}", color = ArenaGreen, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                 }
@@ -251,9 +270,10 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
+            // BUTTON
             Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 SlideToConfirmButton(
-                    text = if (isLoading) "CREATING..." else "SLIDE TO INITIATE >>>",
+                    text = if (isLoading) "CREATING..." else stringResource(R.string.slide_to_initiate), // <--- TARJIMA
                     onConfirm = {
                         if (title.isEmpty() || userCoins < totalBet || uid == null) {
                             Toast.makeText(context, "INVALID DATA / FUNDS", Toast.LENGTH_SHORT).show()
@@ -290,6 +310,7 @@ fun CreateChallengeScreen(navController: NavController) {
     }
 }
 
+// YORDAMCHI KOMPONENTLAR (O'ZGARISHSIZ)
 @Composable
 fun GlassTextField(value: String, onValueChange: (String) -> Unit, placeholder: String, isSingleLine: Boolean = true, height: Dp = 56.dp) {
     Box(modifier = Modifier.fillMaxWidth().height(height).background(Color(0xFF1A1A1A), RoundedCornerShape(12.dp)).border(1.dp, Color(0xFF333333), RoundedCornerShape(12.dp)).padding(horizontal = 16.dp, vertical = 12.dp), contentAlignment = if (isSingleLine) Alignment.CenterStart else Alignment.TopStart) {

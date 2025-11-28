@@ -24,6 +24,8 @@ import java.io.File
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        com.example.arena.utils.LocaleHelper.loadLocale(this)
         enableEdgeToEdge() // To'liq ekran
         setContent {
             ARENATheme {
@@ -117,6 +119,9 @@ class MainActivity : FragmentActivity() {
                                 // TUZATILDI: Faqat navController va userId beriladi
                                 ChatScreen(navController = navController, targetUserId = userId)
                             }
+                        }
+                        composable(Screen.Settings.route) {
+                            SettingsScreen(navController)
                         }
                     }
                 }

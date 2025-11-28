@@ -14,6 +14,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
@@ -21,18 +23,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.arena.Screen
 import com.example.arena.model.User
-import com.example.arena.ui.components.ArenaButton
-import com.example.arena.ui.components.ArenaTextField
 import com.example.arena.ui.theme.ArenaBlack
 import com.example.arena.ui.theme.ArenaGreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavController) {
     val context = LocalContext.current
@@ -42,7 +44,7 @@ fun SignUpScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // --- YANGI USERNI BAZAGA YOZISH ---
+    // --- LOGIKA ---
     fun saveUserToDb(uid: String) {
         val db = FirebaseFirestore.getInstance()
         val userRef = db.collection("users").document(uid)
@@ -51,15 +53,14 @@ fun SignUpScreen(navController: NavController) {
             uid = uid,
             username = username,
             email = email,
-            marketValue = 100.00, // Start narxi
-            coins = 50,           // Start bonusi
+            marketValue = 0.0,
+            coins = 50,
             status = "ROOKIE"
         )
 
         userRef.set(newUser)
             .addOnSuccessListener {
                 isLoading = false
-                // Muvaffaqiyatli bo'lsa -> Home ga o'tamiz
                 navController.navigate(Screen.Home.route) { popUpTo(0) }
             }
             .addOnFailureListener {
@@ -68,65 +69,140 @@ fun SignUpScreen(navController: NavController) {
             }
     }
 
+    // --- UI DIZAYN (RASMDAGIDEK) ---
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(ArenaBlack)
-            .padding(24.dp)
     ) {
-        // Burchak dekoratsiyasi
+        // TEPADAGI YASHIL GRADIENT
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF004400), Color.Transparent)
+                    )
+                )
+                .align(Alignment.TopCenter)
+        )
 
         Column(
-            modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text("SIGNUP", color = ArenaGreen, fontSize = 24.sp, fontFamily = FontFamily.Monospace)
-            Text("JOIN THE GRID", color = Color.White, fontSize = 36.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // INPUTLAR
-            ArenaTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = "USERNAME (CALLSIGN)"
+            // SARLAVHA
+            Text(
+                text = "JOIN THE GRID",
+                color = Color.White,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                textAlign = TextAlign.Center
             )
 
-            ArenaTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = "EMAIL_ADDRESS",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-            )
+            Spacer(modifier = Modifier.height(40.dp))
 
-            ArenaTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = "PASSWORD",
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = {
-                    val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(imageVector = image, contentDescription = "Toggle", tint = ArenaGreen)
-                    }
-                }
-            )
+            // 1. USERNAME INPUT
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Label kerak emas, placeholder ichida
+                TextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    placeholder = { Text("Username", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .border(1.dp, Color(0xFF333333), RoundedCornerShape(12.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFF111111), // To'q fon
+                        unfocusedContainerColor = Color(0xFF111111),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        cursorColor = ArenaGreen,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    singleLine = true
+                )
+            }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // TUGMA
-            ArenaButton(
-                text = "CREATE ACCOUNT",
-                isLoading = isLoading,
+            // 2. EMAIL INPUT
+            Column(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    placeholder = { Text("Email", color = Color.Gray) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .border(1.dp, Color(0xFF333333), RoundedCornerShape(12.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFF111111),
+                        unfocusedContainerColor = Color(0xFF111111),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        cursorColor = ArenaGreen,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    singleLine = true
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 3. PASSWORD INPUT
+            Column(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    placeholder = { Text("Password", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .border(1.dp, Color(0xFF333333), RoundedCornerShape(12.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(0xFF111111),
+                        unfocusedContainerColor = Color(0xFF111111),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        cursorColor = ArenaGreen,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                imageVector = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                                contentDescription = "Toggle",
+                                tint = Color.Gray
+                            )
+                        }
+                    },
+                    singleLine = true
+                )
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // CREATE ACCOUNT BUTTON
+            Button(
                 onClick = {
                     if (email.isNotEmpty() && password.isNotEmpty() && username.isNotEmpty()) {
                         isLoading = true
                         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    // Auth o'tdi, endi Bazaga yozamiz
                                     val uid = task.result.user?.uid
                                     if (uid != null) {
                                         saveUserToDb(uid)
@@ -139,15 +215,43 @@ fun SignUpScreen(navController: NavController) {
                     } else {
                         Toast.makeText(context, "FILL ALL FIELDS", Toast.LENGTH_SHORT).show()
                     }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = ArenaGreen),
+                shape = RoundedCornerShape(50)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(color = ArenaBlack, modifier = Modifier.size(24.dp))
+                } else {
+                    Text("CREATE ACCOUNT", color = ArenaBlack, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
-            )
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
 
             // LOGIN LINK
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text("ALREADY HAVE AN ACCOUNT? ", color = Color.Gray, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
-                Text("LOG IN", color = ArenaGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace,
-                    modifier = Modifier.clickable { navController.navigate(Screen.Login.route) })
+            Row {
+                Text("Already have an account? ", color = Color.Gray, fontSize = 12.sp)
+                Text(
+                    "Log In",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    modifier = Modifier.clickable { navController.navigate(Screen.Login.route) }
+                )
             }
+
+            // TERMS (Pastki qism)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "By creating an account, you agree to our Terms of Service and Privacy Policy.",
+                color = Color.Gray,
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center,
+                lineHeight = 14.sp
+            )
         }
     }
 }

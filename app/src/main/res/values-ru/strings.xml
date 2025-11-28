@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">Arena</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="edit_profile">Редактировать</string>
+    <string name="language">Язык</string>
+    <string name="log_out">Выйти</string>
+
+    <string name="net_worth">Репутация</string>
+    <string name="performance_trend">Дисциплина</string>
+    <string name="last_30_days">За 30 дней</string>
+    <string name="active_operations">Активные Миссии</string>
+    <string name="no_active_challenges">Нет активных миссий.</string>
+
+    <string name="followers">Подписчики</string>
+    <string name="following">Подписки</string>
+    <string name="win_rate">% Побед</string>
+    <string name="invest">СТАВКА</string>
+    <string name="follow">Подписаться</string>
+    <string name="unfollow">Отписаться</string>
+    <string name="message">Чат</string>
+    <string name="challenge_history">История Битв</string>
+    <string name="active_bets">Активные</string>
+    <string name="history">История</string>
+    <string name="capital">МОНЕТЫ</string>
+
+    <string name="create_contract">НОВАЯ МИССИЯ</string>
+    <string name="mission_objective">ЦЕЛЬ</string>
+    <string name="details">ДЕТАЛИ</string>
+    <string name="mode_type">РЕЖИМ</string>
+    <string name="one_shot">РАЗОВЫЙ</string>
+    <string name="daily_habit">ЕЖЕДНЕВНО</string>
+    <string name="deadline">ДЕДЛАЙН</string>
+    <string name="bet_amount">СУММА СТАВКИ</string>
+    <string name="daily_stake">ЕЖЕДНЕВНАЯ СТАВКА</string>
+    <string name="total_risk">РИСК</string>
+    <string name="potential_win">НАГРАДА</string>
+    <string name="slide_to_initiate">СВАЙП ДЛЯ СТАРТА >>></string>
+
+    <string name="the_tribunal">ТРИБУНАЛ</string>
+    <string name="judge_earn_repeat">СУДИ. ЗАРАБАТЫВАЙ. ПОВТОРЯЙ.</string>
+    <string name="no_cases">НЕТ ДЕЛ</string>
+    <string name="fake">ФЕЙК ❌</string>
+    <string name="valid">ВЕРНО ✅</string>
+
+    <string name="the_market">АРЕНА</string>
+    <string name="top_gainers">ЛУЧШИЕ БОЙЦЫ 🔥</string>
+    <string name="all_listings">ВСЕ ГЛАДИАТОРЫ</string>
+    <string name="search">Найти бойца...</string>
+
+    <string name="notifications_title">Оповещения</string>
+    <string name="no_new_activity">Нет новых оповещений.</string>
+    <string name="notif_invested">сделал ставку на вас</string>
+    <string name="notif_followed">вступил в отряд</string>
+    <string name="notif_bet_won">Победа!</string>
+    <string name="notif_bet_lost">Поражение</string>
+    <string name="notif_unfollowed">покинул отряд</string>
+    <string name="notif_default">Новое оповещение</string>
+
+    <string name="desc_invest">Репутация повышена!</string>
+    <string name="desc_follow">Посмотрите статистику.</string>
+    <string name="desc_win">Вы выиграли ставку.</string>
+    <string name="desc_loss">Трибунал отклонил пруф.</string>
+    <string name="desc_unfollow">Докажите им обратное!</string>
+    <string name="desc_default">Нажмите для просмотра.</string>
+
+    <string name="inbox_title">Связь</string>
+    <string name="no_messages">Нет сообщений</string>
+    <string name="just_now">Только что</string>
+    <string name="type_message">Введите сообщение...</string>
+
+    <string name="send">Отправить</string>
+    <string name="online">В сети</string>
+    <string name="today">Сегодня</string>
+    <string name="delete_message">Удалить?</string>
+    <string name="delete_confirm">Удалить это сообщение?</string>
+    <string name="also_delete_for">Удалить также для</string>
+    <string name="delete">УДАЛИТЬ</string>
+    <string name="cancel">ОТМЕНА</string>
+    <string name="clear_history">Очистить чат</string>
+    <string name="clear_history_confirm">Это действие нельзя отменить.</string>
+    <string name="clear_all">ОЧИСТИТЬ</string>
+    <string name="block_user">Блок</string>
+    <string name="coming_soon">Скоро</string>
+
+    <string name="uploading_video">ЗАГРУЗКА ПРУФА...</string>
+    <string name="retake">ПЕРЕСНЯТЬ</string>
+    <string name="submit">ОТПРАВИТЬ</string>
+    <string name="rec">REC ●</string>
+    <string name="recording_error">Ошибка</string>
+    <string name="failed_to_start">Сбой</string>
+
+    <string name="followers_title">ПОДПИСЧИКИ</string>
+    <string name="following_title">ПОДПИСКИ</string>
+    <string name="list_empty">ПУСТО</string>
+    <string name="remove">УДАЛИТЬ</string>
+    <string name="btn_following">ВЫ ПОДПИСАНЫ</string>
+</resources>

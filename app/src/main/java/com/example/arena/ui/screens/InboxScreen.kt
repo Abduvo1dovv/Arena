@@ -1,16 +1,16 @@
 package com.example.arena.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddComment
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,13 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource // <-- IMPORT
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.example.arena.R // <-- IMPORT
 import com.example.arena.Screen
 import com.example.arena.model.ChatRoom
 import com.example.arena.model.User
@@ -49,6 +53,7 @@ fun InboxScreen(navController: NavController) {
 
     var chatList by remember { mutableStateOf<List<ChatItemData>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var searchQuery by remember { mutableStateOf("") }
 
     // JONLI KUZATUV
     DisposableEffect(Unit) {
@@ -96,87 +101,112 @@ fun InboxScreen(navController: NavController) {
             .fillMaxSize()
             .background(ArenaBlack)
     ) {
-        // 1. LIST (Orqa fonda)
-        if (isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = ArenaGreen)
-            }
-        } else if (chatList.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("NO MESSAGES YET", color = Color.Gray, fontFamily = FontFamily.Monospace)
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                // Header balandligi (taxminan 80dp + status bar)
-                contentPadding = PaddingValues(top = 100.dp, bottom = 80.dp)
+        // 1. ORQA FON (Rasmdagi yashil gradient)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF004400), // To'q yashil (Tepada)
+                            ArenaBlack         // Qora (Pastda)
+                        )
+                    )
+                )
+        )
+
+        Column(modifier = Modifier.fillMaxSize()) {
+            // 2. HEADER (Inbox yozuvi va Edit icon)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                items(chatList) { item ->
-                    InboxItem(item, currentUserId!!) {
-                        if (item.otherUser != null) {
-                            navController.navigate(com.example.arena.Screen.Chat.createRoute(item.otherUser.uid))
+                Spacer(modifier = Modifier.size(24.dp)) // O'rtaga olish uchun
+                Text(
+                    text = stringResource(R.string.inbox_title), // <--- R.string.inbox_title
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Icon(
+                    imageVector = Icons.Default.Edit, // Qalam belgisi
+                    contentDescription = "New Message",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { navController.navigate(Screen.Search.route) } // Yangi xabar yozish uchun Searchga o'tadi
+                )
+            }
+
+            // 3. SEARCH BAR (Rasmdagi kabi)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .height(48.dp)
+                    .background(Color(0xFF1A1A1A), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    BasicTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        singleLine = true,
+                        textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
+                        cursorBrush = SolidColor(ArenaGreen),
+                        decorationBox = { innerTextField ->
+                            if (searchQuery.isEmpty()) {
+                                Text(stringResource(R.string.search), color = Color.Gray, fontSize = 16.sp) // <--- R.string.search
+                            }
+                            innerTextField()
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 4. LIST
+            if (isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = ArenaGreen)
+                }
+            } else if (chatList.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(stringResource(R.string.no_messages), color = Color.Gray) // <--- R.string.no_messages
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 100.dp)
+                ) {
+                    val filteredList = if (searchQuery.isEmpty()) chatList else chatList.filter {
+                        it.otherUser?.username?.contains(searchQuery, ignoreCase = true) == true
+                    }
+
+                    items(filteredList) { item ->
+                        InboxItem(item, currentUserId!!) {
+                            if (item.otherUser != null) {
+                                navController.navigate(Screen.Chat.createRoute(item.otherUser.uid))
+                            }
                         }
                     }
                 }
             }
-        }
-
-        // 2. ODDIY HEADER (Tepada qotib turadi)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color(0xFF003300), Color.Transparent) // Yengil gradient
-                    )
-                )
-                .zIndex(1f)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding() // Soatdan pastga tushadi
-                    .height(56.dp) // Standart Toolbar balandligi
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // ORQAGA TUGMASI (Doirasiz, oddiy)
-                IconButton(
-                    onClick = { navController.popBackStack() },
-                    modifier = Modifier.size(24.dp) // Kichikroq va ixcham
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                // SARLAVHA
-                Text(
-                    text = "DIRECT MESSAGES",
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-
-        // 3. FAB (Pastda)
-        FloatingActionButton(
-            onClick = { navController.navigate(com.example.arena.Screen.Search.route) },
-            containerColor = ArenaGreen,
-            contentColor = ArenaBlack,
-            shape = CircleShape,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(24.dp)
-                .zIndex(1f)
-        ) {
-            Icon(Icons.Default.AddComment, contentDescription = "New Chat")
         }
     }
 }
@@ -184,11 +214,20 @@ fun InboxScreen(navController: NavController) {
 @Composable
 fun InboxItem(item: ChatItemData, myId: String, onClick: () -> Unit) {
     val time = if (item.chatRoom.lastMessageTime > 0) {
-        SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(item.chatRoom.lastMessageTime))
+        // Vaqt formati
+        val diff = System.currentTimeMillis() - item.chatRoom.lastMessageTime
+        when {
+            diff < 60000 -> stringResource(R.string.just_now) // <--- R.string.just_now
+            diff < 3600000 -> "${diff / 60000}m"
+            diff < 86400000 -> "${diff / 3600000}h"
+            else -> "${diff / 86400000}d"
+        }
     } else ""
 
     val isUnread = (item.chatRoom.lastSenderId != myId) && !item.chatRoom.isRead
-    val textColor = if (isUnread) Color.White else Color.Gray
+
+    val nameColor = Color.White
+    val messageColor = if (isUnread) Color.White else Color.Gray
     val fontWeight = if (isUnread) FontWeight.Bold else FontWeight.Normal
 
     Row(
@@ -198,52 +237,59 @@ fun InboxItem(item: ChatItemData, myId: String, onClick: () -> Unit) {
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        // Avatar
+        val avatarUrl = "https://api.dicebear.com/9.x/notionists/png?seed=${item.otherUser?.uid ?: "x"}&backgroundColor=00ff41"
+        AsyncImage(
+            model = avatarUrl,
+            contentDescription = null,
             modifier = Modifier
                 .size(56.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF222222))
-                .border(if (isUnread) 2.dp else 1.dp, ArenaGreen, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = item.otherUser?.username?.take(1)?.uppercase() ?: "?",
-                color = ArenaGreen,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
-        }
+                .background(Color(0xFF222222)),
+            contentScale = ContentScale.Crop
+        )
 
         Spacer(modifier = Modifier.width(16.dp))
 
+        // Text Content
         Column(modifier = Modifier.weight(1f)) {
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(
                     text = item.otherUser?.username ?: "Unknown",
-                    color = Color.White,
-                    fontWeight = if (isUnread) FontWeight.Bold else FontWeight.SemiBold,
+                    color = nameColor,
+                    fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
-                Text(text = time, color = if (isUnread) ArenaGreen else Color.Gray, fontSize = 12.sp)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = item.chatRoom.lastMessage,
-                    color = textColor,
-                    fontSize = 14.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontWeight = fontWeight,
-                    modifier = Modifier.weight(1f)
+                    text = time,
+                    color = Color.Gray,
+                    fontSize = 12.sp
                 )
-
-                if (isUnread) {
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(modifier = Modifier.size(10.dp).background(ArenaGreen, CircleShape))
-                }
             }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = item.chatRoom.lastMessage,
+                color = messageColor,
+                fontSize = 14.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = fontWeight
+            )
+        }
+
+        // Unread Indicator (Yashil nuqta)
+        if (isUnread) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .size(10.dp)
+                    .background(ArenaGreen, CircleShape)
+            )
         }
     }
-    Divider(color = Color(0xFF222222), thickness = 1.dp, modifier = Modifier.padding(start = 88.dp))
 }

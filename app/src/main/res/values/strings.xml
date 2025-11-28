@@ -1,3 +1,95 @@
 <resources>
-    <string name="app_name">ARENA</string>
+    <string name="app_name">Arena</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="language">Language</string>
+    <string name="log_out">Log Out</string>
+
+    <string name="net_worth">Reputation</string>
+    <string name="performance_trend">Discipline Trend</string>
+    <string name="last_30_days">Last 30 Days</string>
+    <string name="active_operations">Active Missions</string>
+    <string name="no_active_challenges">No active missions.</string>
+
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="win_rate">Win Rate</string>
+    <string name="invest">BET</string> <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="message">Message</string>
+    <string name="challenge_history">Battle History</string>
+    <string name="active_bets">Active Bets</string>
+    <string name="history">History</string>
+    <string name="capital">COINS</string> <string name="create_contract">NEW MISSION</string>
+    <string name="mission_objective">OBJECTIVE</string>
+    <string name="details">DETAILS</string>
+    <string name="mode_type">MODE</string>
+    <string name="one_shot">ONE SHOT</string>
+    <string name="daily_habit">DAILY GRIND</string>
+    <string name="deadline">DEADLINE</string>
+    <string name="bet_amount">STAKE AMOUNT</string>
+    <string name="daily_stake">DAILY STAKE</string>
+    <string name="total_risk">TOTAL RISK</string>
+    <string name="potential_win">POTENTIAL REWARD</string>
+    <string name="slide_to_initiate">SLIDE TO START >>></string>
+
+    <string name="the_tribunal">THE TRIBUNAL</string>
+    <string name="judge_earn_repeat">JUDGE. EARN. REPEAT.</string>
+    <string name="no_cases">NO CASES PENDING</string>
+    <string name="fake">FAKE ❌</string>
+    <string name="valid">VALID ✅</string>
+
+    <string name="the_market">THE ARENA</string>
+    <string name="top_gainers">TOP WARRIORS 🔥</string>
+    <string name="all_listings">ALL GLADIATORS</string>
+    <string name="search">Find Warriors...</string>
+
+    <string name="notifications_title">Alerts</string>
+    <string name="no_new_activity">No new activity.</string>
+    <string name="notif_invested">bet on you</string>
+    <string name="notif_followed">joined your squad</string>
+    <string name="notif_bet_won">Victory!</string>
+    <string name="notif_bet_lost">Defeat</string>
+    <string name="notif_unfollowed">left your squad</string>
+    <string name="notif_default">New alert</string>
+
+    <string name="desc_invest">Reputation increased!</string>
+    <string name="desc_follow">Check their stats.</string>
+    <string name="desc_win">You won the stake.</string>
+    <string name="desc_loss">Proof rejected by Tribunal.</string>
+    <string name="desc_unfollow">Stay hard!</string>
+    <string name="desc_default">Tap to view.</string>
+
+    <string name="inbox_title">Comms</string>
+    <string name="no_messages">No comms yet</string>
+    <string name="just_now">Just now</string>
+    <string name="type_message">Enter message...</string>
+
+    <string name="send">Send</string>
+    <string name="online">Online</string>
+    <string name="today">Today</string>
+    <string name="delete_message">Delete?</string>
+    <string name="delete_confirm">Delete this message?</string>
+    <string name="also_delete_for">Also delete for</string>
+    <string name="delete">DELETE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="clear_history">Clear History</string>
+    <string name="clear_history_confirm">This cannot be undone.</string>
+    <string name="clear_all">CLEAR</string>
+    <string name="block_user">Block</string>
+    <string name="coming_soon">Coming Soon</string>
+
+    <string name="uploading_video">UPLOADING PROOF...</string>
+    <string name="retake">RETAKE</string>
+    <string name="submit">SUBMIT</string>
+    <string name="rec">REC ●</string>
+    <string name="recording_error">Recording Error</string>
+    <string name="failed_to_start">Failed to start</string>
+
+    <string name="followers_title">FOLLOWERS</string>
+    <string name="following_title">FOLLOWING</string>
+    <string name="list_empty">EMPTY LIST</string>
+    <string name="remove">REMOVE</string>
+    <string name="btn_following">FOLLOWING</string>
 </resources>

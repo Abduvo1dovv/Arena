@@ -1,9 +1,11 @@
 package com.example.arena.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -14,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
 import androidx.compose.material.icons.rounded.Groups
@@ -28,12 +31,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource // <-- MUHIM
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.arena.R // <-- MUHIM
 import com.example.arena.Screen
 import com.example.arena.model.Challenge
 import com.example.arena.model.User
@@ -55,6 +60,10 @@ fun ProfileScreen(navController: NavController) {
 
     var isLoading by remember { mutableStateOf(true) }
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+
+    // --- DELETE UCHUN STATE ---
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var challengeToDelete by remember { mutableStateOf<Challenge?>(null) }
 
     // DATA LOADING
     LaunchedEffect(Unit) {
@@ -83,6 +92,25 @@ fun ProfileScreen(navController: NavController) {
         navController.navigate(Screen.Login.route) { popUpTo(0) }
     }
 
+    // --- DELETE FUNCTION ---
+    fun deleteChallenge() {
+        val challenge = challengeToDelete ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("challenges").document(challenge.id)
+            .delete()
+            .addOnSuccessListener {
+                // Ro'yxatdan lokal o'chirish
+                myHistory = myHistory.filter { it.id != challenge.id }
+                Toast.makeText(context, "Record Deleted", Toast.LENGTH_SHORT).show()
+                showDeleteDialog = false
+                challengeToDelete = null
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to delete", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     Box(modifier = Modifier.fillMaxSize().background(ArenaBlack)) {
         // GRADIENT BACKDROP (Orqada)
         Box(
@@ -106,13 +134,12 @@ fun ProfileScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    IconButton(onClick = { /* Settings */ }) {
+                    IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.Gray)
                     }
                 }
 
                 // --- SCROLLABLE CONTENT ---
-                // LazyVerticalGrid ishlatamiz (2 ta ustunli tarix uchun)
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(bottom = 100.dp), // Bottom Bar uchun joy
@@ -120,10 +147,9 @@ fun ProfileScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
-                    // 1. AVATAR & INFO (Bitta katta item sifatida Gridning tepasida)
+                    // 1. AVATAR & INFO
                     item(span = { GridItemSpan(2) }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            // Avatar
                             val avatarUrl = "https://api.dicebear.com/9.x/notionists/png?seed=${user!!.uid}&backgroundColor=00ff41"
                             Box(
                                 modifier = Modifier
@@ -155,7 +181,7 @@ fun ProfileScreen(navController: NavController) {
                         }
                     }
 
-                    // 2. ACTION BUTTONS (Gridning tepasida)
+                    // 2. ACTION BUTTONS
                     item(span = { GridItemSpan(2) }) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Button(
@@ -164,7 +190,7 @@ fun ProfileScreen(navController: NavController) {
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A1A1A)),
                                 shape = RoundedCornerShape(50)
                             ) {
-                                Text("Edit Profile", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Text(stringResource(R.string.edit_profile), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium) // <--- TARJIMA
                             }
                             Button(
                                 onClick = { performLogout() },
@@ -172,31 +198,31 @@ fun ProfileScreen(navController: NavController) {
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A1A1A)),
                                 shape = RoundedCornerShape(50)
                             ) {
-                                Text("Log Out", color = ArenaRed, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Text(stringResource(R.string.log_out), color = ArenaRed, fontSize = 14.sp, fontWeight = FontWeight.Medium) // <--- TARJIMA
                             }
                         }
                     }
 
-                    // 3. STATS CARDS (3 ta yonma-yon bo'lishi uchun Row ishlatamiz)
+                    // 3. STATS CARDS
                     item(span = { GridItemSpan(2) }) {
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            StatBox("Followers", formatNumber(followersCount)) {
+                            StatBox("followers", formatNumber(followersCount)) {
                                 if (followersCount > 0) navController.navigate(Screen.UserList.createRoute(currentUserId!!, "followers"))
                             }
-                            StatBox("Following", formatNumber(followingCount)) {
+                            StatBox("following", formatNumber(followingCount)) {
                                 if (followingCount > 0) navController.navigate(Screen.UserList.createRoute(currentUserId!!, "following"))
                             }
-                            StatBox("Net Worth", "$${user!!.marketValue.toInt()}", isGreen = true)
+                            StatBox("net_worth", "$${user!!.marketValue.toInt()}", isGreen = true)
                         }
                     }
 
                     // 4. HISTORY TITLE
                     item(span = { GridItemSpan(2) }) {
                         Text(
-                            text = "Challenge History",
+                            text = stringResource(R.string.challenge_history), // <--- TARJIMA
                             color = Color.White,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
@@ -204,26 +230,68 @@ fun ProfileScreen(navController: NavController) {
                         )
                     }
 
-                    // 5. HISTORY CARDS (GRID)
+                    // 5. HISTORY CARDS
                     if (myHistory.isEmpty()) {
                         item(span = { GridItemSpan(2) }) {
                             Text("No history yet.", color = Color.Gray, fontSize = 14.sp, fontFamily = FontFamily.Monospace)
                         }
                     } else {
                         items(myHistory) { challenge ->
-                            HistoryCard(challenge)
+                            HistoryCard(
+                                challenge = challenge,
+                                onLongClick = {
+                                    challengeToDelete = challenge
+                                    showDeleteDialog = true
+                                }
+                            )
                         }
                     }
                 }
             }
         }
+
+        // --- DELETE DIALOG ---
+        if (showDeleteDialog && challengeToDelete != null) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                containerColor = Color(0xFF1A1A1A),
+                title = {
+                    Text("DELETE RECORD?", color = ArenaGreen, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                },
+                text = {
+                    Text("This challenge will be permanently removed from your history.", color = Color.Gray)
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { deleteChallenge() },
+                        colors = ButtonDefaults.buttonColors(containerColor = ArenaRed)
+                    ) {
+                        Text("DELETE", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("CANCEL", color = Color.White)
+                    }
+                }
+            )
+        }
     }
 }
 
-// --- STAT BOX (QORA QUTI) ---
+// --- STAT BOX ---
 @Composable
-fun RowScope.StatBox(label: String, value: String, isGreen: Boolean = false, onClick: () -> Unit = {}) {
+fun RowScope.StatBox(resourceIdName: String, value: String, isGreen: Boolean = false, onClick: () -> Unit = {}) {
     val textColor = if (isGreen) ArenaGreen else Color.White
+
+    // String resursini aniqlash (Dynamic)
+    val label = when(resourceIdName) {
+        "followers" -> stringResource(R.string.followers)
+        "following" -> stringResource(R.string.following)
+        "net_worth" -> stringResource(R.string.net_worth)
+        else -> resourceIdName
+    }
+
     Column(
         modifier = Modifier
             .weight(1f)
@@ -242,9 +310,13 @@ fun RowScope.StatBox(label: String, value: String, isGreen: Boolean = false, onC
     }
 }
 
-// --- HISTORY CARD (RASMLI GRID KARTA) ---
+// --- HISTORY CARD ---
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HistoryCard(challenge: Challenge) {
+fun HistoryCard(
+    challenge: Challenge,
+    onLongClick: () -> Unit
+) {
     val isWin = challenge.status == "COMPLETED"
     val badgeColor = if (isWin) ArenaGreen else ArenaRed
     val badgeText = if (isWin) "WIN" else if (challenge.status == "FAILED") "LOSS" else "PENDING"
@@ -253,10 +325,14 @@ fun HistoryCard(challenge: Challenge) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp) // Uzunroq karta
+            .height(180.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(Color(0xFF111111))
             .border(1.dp, Color(0xFF222222), RoundedCornerShape(20.dp))
+            .combinedClickable(
+                onClick = { /* Detail */ },
+                onLongClick = onLongClick
+            )
     ) {
         if (hasImage) {
             AsyncImage(
@@ -270,7 +346,6 @@ fun HistoryCard(challenge: Challenge) {
             Box(modifier = Modifier.fillMaxSize().background(Brush.linearGradient(colors = listOf(Color(0xFF222222), Color.Black))))
         }
 
-        // Title (Pastda)
         Text(
             text = challenge.title,
             color = Color.White,
@@ -279,7 +354,6 @@ fun HistoryCard(challenge: Challenge) {
             modifier = Modifier.align(Alignment.BottomStart).padding(12.dp)
         )
 
-        // Badge (Tepada)
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)

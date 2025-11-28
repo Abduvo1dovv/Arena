@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource // <-- MUHIM
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -31,11 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.arena.R // <-- MUHIM
 import com.example.arena.Screen
 import com.example.arena.model.Notification
 import com.example.arena.model.User
 import com.example.arena.ui.theme.ArenaBlack
 import com.example.arena.ui.theme.ArenaGreen
+import com.example.arena.ui.theme.ArenaRed
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -120,39 +122,46 @@ fun SearchScreen(navController: NavController) {
             .fillMaxSize()
             .background(ArenaBlack)
     ) {
-        // 1. ORQA FON GRADIENTI (Eng tepadan boshlanadi)
+        // 1. ORQA FON GRADIENTI
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp) // Ekran yarmigacha tushadi
+                .height(300.dp)
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF003300), // To'q yashil (Tepada)
-                            ArenaBlack         // Qora (Pastda)
-                        )
+                        colors = listOf(Color(0xFF003300), ArenaBlack)
                     )
                 )
         )
 
-        // 2. ASOSIY CONTENT (Scroll bo'ladigan qism)
+        // 2. ASOSIY CONTENT
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
-            // SEARCH BAR QISMI
+            // HEADER & SEARCH
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .statusBarsPadding() // Soatdan pastga tushirish
+                    .statusBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 16.dp)
             ) {
+                // THE MARKET TITLE (TARJIMA)
+                Text(
+                    text = stringResource(R.string.the_market), // <--- R.string.the_market
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 // Search Bar
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .background(Color(0xFF111111).copy(alpha = 0.8f), RoundedCornerShape(12.dp)) // Biroz shaffof
+                        .background(Color(0xFF111111).copy(alpha = 0.8f), RoundedCornerShape(12.dp))
                         .border(1.dp, Color(0xFF333333), RoundedCornerShape(12.dp))
                         .padding(horizontal = 16.dp),
                     contentAlignment = Alignment.CenterStart
@@ -164,11 +173,12 @@ fun SearchScreen(navController: NavController) {
                             value = searchQuery,
                             onValueChange = { searchQuery = it },
                             singleLine = true,
-                            textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
+                            textStyle = TextStyle(color = Color.White, fontSize = 16.sp, fontFamily = FontFamily.Monospace),
                             cursorBrush = SolidColor(ArenaGreen),
                             decorationBox = { innerTextField ->
                                 if (searchQuery.isEmpty()) {
-                                    Text("Search Gladiators...", color = Color.Gray, fontSize = 16.sp)
+                                    // SEARCH PLACEHOLDER (TARJIMA)
+                                    Text(stringResource(R.string.search), color = Color.Gray, fontSize = 16.sp, fontFamily = FontFamily.Monospace) // <--- R.string.search
                                 }
                                 innerTextField()
                             },
@@ -177,10 +187,11 @@ fun SearchScreen(navController: NavController) {
                     }
                 }
 
-                // Balans (Search bar ostida kichkina qilib)
                 Spacer(modifier = Modifier.height(8.dp))
+
+                // Balans (CAPITAL) (TARJIMA)
                 Text(
-                    text = "BALANCE: $currentUserCoins COINS",
+                    text = "${stringResource(R.string.capital)}: $currentUserCoins", // <--- R.string.capital
                     color = ArenaGreen,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
@@ -189,7 +200,7 @@ fun SearchScreen(navController: NavController) {
                 )
             }
 
-            // SCROLLABLE CONTENT (Trending & List)
+            // SCROLLABLE CONTENT
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 100.dp)
@@ -198,34 +209,36 @@ fun SearchScreen(navController: NavController) {
                     // TRENDING SECTION
                     item {
                         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                            Text("Trending", color = Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                            Spacer(modifier = Modifier.height(16.dp))
+                            // TOP GAINERS (TARJIMA)
+                            Text(stringResource(R.string.top_gainers), color = Color.Gray, fontSize = 12.sp, fontFamily = FontFamily.Monospace) // <--- R.string.top_gainers
+                            Spacer(modifier = Modifier.height(12.dp))
 
                             LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 items(trendingUsers) { user ->
-                                    TrendingUserItem(user) {
+                                    TrendingCard(user) {
                                         navController.navigate(Screen.UserDetail.createRoute(user.uid))
                                     }
                                 }
                             }
+
                             Spacer(modifier = Modifier.height(32.dp))
-                            Text("Top Movers", color = Color.Gray, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                            Spacer(modifier = Modifier.height(16.dp))
+                            // ALL LISTINGS (TARJIMA)
+                            Text(stringResource(R.string.all_listings), color = Color.Gray, fontSize = 12.sp, fontFamily = FontFamily.Monospace) // <--- R.string.all_listings
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
 
-                    // MARKET LIST
+                    // ALL LISTINGS (Vertical)
                     items(trendingUsers) { user ->
-                        Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                            MarketUserRow(
-                                user = user,
-                                onInvest = { investInUser(user) },
-                                onClick = { navController.navigate(Screen.UserDetail.createRoute(user.uid)) }
-                            )
-                        }
+                        MarketUserRow(
+                            user = user,
+                            onInvest = { investInUser(user) },
+                            onClick = { navController.navigate(Screen.UserDetail.createRoute(user.uid)) }
+                        )
+                        Divider(color = Color(0xFF222222), thickness = 0.5.dp)
                     }
                 } else {
                     // SEARCH RESULTS
@@ -237,13 +250,12 @@ fun SearchScreen(navController: NavController) {
                         }
                     } else {
                         items(searchResults) { user ->
-                            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                                MarketUserRow(
-                                    user = user,
-                                    onInvest = { investInUser(user) },
-                                    onClick = { navController.navigate(Screen.UserDetail.createRoute(user.uid)) }
-                                )
-                            }
+                            MarketUserRow(
+                                user = user,
+                                onInvest = { investInUser(user) },
+                                onClick = { navController.navigate(Screen.UserDetail.createRoute(user.uid)) }
+                            )
+                            Divider(color = Color(0xFF222222), thickness = 0.5.dp)
                         }
                     }
                 }
@@ -252,50 +264,117 @@ fun SearchScreen(navController: NavController) {
     }
 }
 
-// --- KOMPONENTLAR O'ZGARISHSIZ QOLADI ---
+// --- COMPONENTLAR (YANGILANGAN DIZAYN BILAN) ---
+
 @Composable
-fun TrendingUserItem(user: User, onClick: () -> Unit) {
+fun TrendingCard(user: User, onClick: () -> Unit) {
     val avatarUrl = "https://api.dicebear.com/9.x/notionists/png?seed=${user.uid}&backgroundColor=00ff41"
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable { onClick() }) {
-        AsyncImage(model = avatarUrl, contentDescription = null, modifier = Modifier.size(64.dp).clip(CircleShape).background(Color(0xFF222222)), contentScale = ContentScale.Crop)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = user.username.take(10), color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium, maxLines = 1)
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "$${user.marketValue.toInt()}", color = ArenaGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+
+    Card(
+        modifier = Modifier
+            .width(120.dp)
+            .height(150.dp)
+            .clickable { onClick() }
+            .border(1.dp, Color(0xFF333333), RoundedCornerShape(12.dp)),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF111111)),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize().padding(8.dp)
+        ) {
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = null,
+                modifier = Modifier.size(60.dp).clip(CircleShape).background(Color(0xFF222222)),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = user.username.take(10),
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
+            )
+            Text(
+                text = "$${user.marketValue.toInt()}",
+                color = ArenaGreen,
+                fontSize = 12.sp,
+                fontFamily = FontFamily.Monospace
+            )
+        }
     }
 }
 
 @Composable
 fun MarketUserRow(user: User, onInvest: () -> Unit, onClick: () -> Unit) {
     val avatarUrl = "https://api.dicebear.com/9.x/notionists/png?seed=${user.uid}&backgroundColor=00ff41"
-    val percent = (1..5).random() + (0..9).random() * 0.1
+    val percent = (user.marketValue / 100.0 * 5.0)
 
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { onClick() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AsyncImage(model = avatarUrl, contentDescription = null, modifier = Modifier.size(48.dp).clip(CircleShape).background(Color(0xFF222222)), contentScale = ContentScale.Crop)
-            Spacer(modifier = Modifier.width(16.dp))
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = null,
+                modifier = Modifier.size(40.dp).clip(CircleShape).background(Color(0xFF222222)),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+
             Column {
-                Text(text = user.username, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = user.username,
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "$${user.marketValue}", color = Color.Gray, fontSize = 14.sp, fontFamily = FontFamily.Monospace)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "+${String.format("%.1f", percent)}%", color = ArenaGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = "VAL: ",
+                        color = Color.Gray,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Text(
+                        text = "$${user.marketValue}",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
                 }
             }
         }
-        Button(
-            onClick = onInvest,
-            colors = ButtonDefaults.buttonColors(containerColor = ArenaGreen),
-            shape = RoundedCornerShape(50),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 0.dp),
-            modifier = Modifier.height(36.dp)
-        ) {
-            Text(text = "Invest", color = ArenaBlack, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "+${String.format("%.1f", percent)}%",
+                color = ArenaGreen,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(end = 12.dp)
+            )
+
+            // INVEST BUTTON (TARJIMA)
+            Button(
+                onClick = onInvest,
+                colors = ButtonDefaults.buttonColors(containerColor = ArenaGreen.copy(alpha = 0.1f)),
+                border = androidx.compose.foundation.BorderStroke(1.dp, ArenaGreen),
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                modifier = Modifier.height(32.dp)
+            ) {
+                // "BUY" ni ham string resursga o'tkazishingiz mumkin, hozircha shunday qoldirdim
+                Text(stringResource(R.string.invest), color = ArenaGreen, fontWeight = FontWeight.Bold, fontSize = 12.sp) // <--- R.string.invest (yoki buy)
+            }
         }
     }
 }

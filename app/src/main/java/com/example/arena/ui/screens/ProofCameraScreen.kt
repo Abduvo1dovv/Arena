@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -42,6 +43,7 @@ import androidx.navigation.NavController
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.example.arena.R
 import com.example.arena.ui.theme.ArenaBlack
 import com.example.arena.ui.theme.ArenaGreen
 import com.example.arena.ui.theme.ArenaRed
@@ -208,7 +210,7 @@ fun ProofCameraScreen(
                 Box(
                     modifier = Modifier.fillMaxWidth().weight(1f).padding(16.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .border(2.dp, ArenaGreen, RoundedCornerShape(16.dp))
+                        .border(1.dp, ArenaGreen, RoundedCornerShape(16.dp))
                 ) {
                     AndroidView(
                         factory = { ctx ->
@@ -237,7 +239,7 @@ fun ProofCameraScreen(
                             border = androidx.compose.foundation.BorderStroke(1.dp, ArenaRed)
                         ) {
                             Icon(Icons.Default.Close, null, tint = ArenaRed)
-                            Text("RETAKE", color = ArenaRed)
+                            Text(stringResource(R.string.retake), color = ArenaRed)
                         }
 
                         Button(
@@ -271,7 +273,7 @@ fun ProofCameraScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = ArenaGreen)
                         ) {
                             Icon(Icons.Default.Check, null, tint = ArenaBlack)
-                            Text("SUBMIT", color = ArenaBlack, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.submit), color = ArenaBlack, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -315,7 +317,7 @@ fun ProofCameraScreen(
                                 .background(ArenaRed, RoundedCornerShape(8.dp))
                                 .padding(horizontal = 12.dp, vertical = 6.dp)
                         ) {
-                            Text("REC ●", color = Color.White, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.rec), color = Color.White, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

@@ -5,7 +5,7 @@ data class Challenge(
     val userId: String = "",
     val title: String = "",
 
-    // CreateChallengeScreen da ishlatilayotgan yangi maydon
+
     val description: String = "",
 
     val betAmount: Int = 0,

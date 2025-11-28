@@ -1,0 +1,95 @@
+<resources>
+    <string name="app_name">Arena</string>
+
+    <string name="settings_title">Sozlamalar</string>
+    <string name="edit_profile">Profilni Tahrirlash</string>
+    <string name="language">Til</string>
+    <string name="log_out">Chiqish</string>
+
+    <string name="net_worth">Obro\' (Reputation)</string>
+    <string name="performance_trend">Intizom Grafigi</string>
+    <string name="last_30_days">So\'nggi 30 kun</string>
+    <string name="active_operations">Faol Missiyalar</string>
+    <string name="no_active_challenges">Faol missiyalar yo\'q.</string>
+
+    <string name="followers">Kuzatuvchilar</string>
+    <string name="following">Kuzatilmoqda</string>
+    <string name="win_rate">G\'alaba %</string>
+    <string name="invest">TIKISH</string> <string name="follow">Kuzatish</string>
+    <string name="unfollow">Bekor qilish</string>
+    <string name="message">Xabar</string>
+    <string name="challenge_history">Janglar Tarixi</string>
+    <string name="active_bets">Faol Garovlar</string>
+    <string name="history">Tarix</string>
+    <string name="capital">TANGALAR</string> <string name="create_contract">YANGI MISSIYA</string>
+    <string name="mission_objective">MAQSAD</string>
+    <string name="details">TAFSILOTLAR</string>
+    <string name="mode_type">REJIM</string>
+    <string name="one_shot">BIR MARTALIK</string>
+    <string name="daily_habit">HAR KUNLIK</string>
+    <string name="deadline">MUDDAT</string>
+    <string name="bet_amount">TIKILADIGAN SUMMA</string>
+    <string name="daily_stake">KUNLIK SUMMA</string>
+    <string name="total_risk">JAMI XAVF</string>
+    <string name="potential_win">MUKOFOT</string>
+    <string name="slide_to_initiate">BOSHLASH UCHUN SURING >>></string>
+
+    <string name="the_tribunal">SUD ZALI</string>
+    <string name="judge_earn_repeat">HUKM QIL. ISHLA. QAYTAR.</string>
+    <string name="no_cases">ISH KO\'RILMAYAPTI</string>
+    <string name="fake">YOLG\'ON ❌</string>
+    <string name="valid">HAQIQIY ✅</string>
+
+    <string name="the_market">ARENA</string>
+    <string name="top_gainers">ENG KUCHLILAR 🔥</string>
+    <string name="all_listings">BARCHA GLADIATORLAR</string>
+    <string name="search">Gladiator izlash...</string>
+
+    <string name="notifications_title">Xabarnomalar</string>
+    <string name="no_new_activity">Yangi xabarlar yo\'q.</string>
+    <string name="notif_invested">sizga pul tikdi</string>
+    <string name="notif_followed">safga qo\'shildi</string>
+    <string name="notif_bet_won">G\'alaba!</string>
+    <string name="notif_bet_lost">Mag\'lubiyat</string>
+    <string name="notif_unfollowed">safdan chiqdi</string>
+    <string name="notif_default">Yangi xabar</string>
+
+    <string name="desc_invest">Obro\'yingiz oshdi!</string>
+    <string name="desc_follow">Uning statistikasini ko\'ring.</string>
+    <string name="desc_win">Siz garovni yutdingiz.</string>
+    <string name="desc_loss">Tribunal isbotni rad etdi.</string>
+    <string name="desc_unfollow">Ularga isbotlang!</string>
+    <string name="desc_default">Ko\'rish uchun bosing.</string>
+
+    <string name="inbox_title">Aloqa</string>
+    <string name="no_messages">Xabarlar yo\'q</string>
+    <string name="just_now">Hozir</string>
+    <string name="type_message">Xabar yozing...</string>
+
+    <string name="send">Yuborish</string>
+    <string name="online">Onlayn</string>
+    <string name="today">Bugun</string>
+    <string name="delete_message">O\'chirish?</string>
+    <string name="delete_confirm">Bu xabarni o\'chirasizmi?</string>
+    <string name="also_delete_for">U uchun ham:</string>
+    <string name="delete">O\'CHIRISH</string>
+    <string name="cancel">BEKOR QILISH</string>
+    <string name="clear_history">Tarixni tozalash</string>
+    <string name="clear_history_confirm">Qaytarib bo\'lmaydi.</string>
+    <string name="clear_all">TOZALASH</string>
+    <string name="block_user">Bloklash</string>
+    <string name="coming_soon">Tez orada</string>
+
+    <string name="uploading_video">ISBOT YUKLANMOQDA...</string>
+    <string name="retake">QAYTA OLISH</string>
+    <string name="submit">YUBORISH</string>
+    <string name="rec">REC ●</string>
+    <string name="recording_error">Xatolik</string>
+    <string name="failed_to_start">Boshlanmadi</string>
+
+    <string name="followers_title">KUZATUVCHILAR</string>
+    <string name="following_title">KUZATILMOQDA</string>
+    <string name="list_empty">RO‘YXAT BO‘SH</string>
+    <string name="remove">O‘CHIRISH</string>
+    <string name="btn_following">KUZATYAPSIZ</string>
+</resources>

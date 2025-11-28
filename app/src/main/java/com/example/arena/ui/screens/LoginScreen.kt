@@ -5,7 +5,9 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,20 +19,24 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.arena.R // Google ikonka uchun (agar bo'lmasa qo'lda chizamiz)
 import com.example.arena.Screen
 import com.example.arena.model.User
-import com.example.arena.ui.components.ArenaButton
-import com.example.arena.ui.components.ArenaTextField
 import com.example.arena.ui.theme.ArenaBlack
 import com.example.arena.ui.theme.ArenaGreen
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -39,6 +45,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
@@ -48,34 +55,23 @@ fun LoginScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // --- BAZANI TEKSHIRISH FUNKSIYASI ---
+    // --- AUTH LOGIC ---
     fun checkAndCreateUserInDb() {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             val db = FirebaseFirestore.getInstance()
             val userRef = db.collection("users").document(user.uid)
-
             userRef.get().addOnSuccessListener { document ->
                 if (document.exists()) {
                     navController.navigate(Screen.Home.route) { popUpTo(0) }
                 } else {
-                    val newUser = User(
-                        uid = user.uid,
-                        username = user.displayName ?: "GLADIATOR",
-                        email = user.email ?: "",
-                        marketValue = 100.00,
-                        coins = 50,
-                        status = "ROOKIE"
-                    )
-                    userRef.set(newUser).addOnSuccessListener {
-                        navController.navigate(Screen.Home.route) { popUpTo(0) }
-                    }
+                    val newUser = User(uid = user.uid, username = user.displayName ?: "User", email = user.email ?: "", marketValue = 0.0, coins = 50, status = "ROOKIE")
+                    userRef.set(newUser).addOnSuccessListener { navController.navigate(Screen.Home.route) { popUpTo(0) } }
                 }
             }
         }
     }
 
-    // --- GOOGLE SIGN IN ---
     val googleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             isLoading = true
@@ -83,140 +79,162 @@ fun LoginScreen(navController: NavController) {
             try {
                 val account = task.result
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                FirebaseAuth.getInstance().signInWithCredential(credential)
-                    .addOnCompleteListener { authTask ->
-                        if (authTask.isSuccessful) {
-                            checkAndCreateUserInDb()
-                        } else {
-                            isLoading = false
-                            errorMessage = "GOOGLE LOGIN FAILED"
-                        }
-                    }
-            } catch (e: Exception) {
-                isLoading = false
-                errorMessage = "ERROR: ${e.message}"
-            }
+                FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener { if (it.isSuccessful) checkAndCreateUserInDb() else { isLoading = false; errorMessage = "Google Login Failed" } }
+            } catch (e: Exception) { isLoading = false; errorMessage = "Error: ${e.message}" }
         }
     }
 
     fun startGoogleSignIn() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            // SIZNING WEB CLIENT ID INGIZ:
-            .requestIdToken("1026629804794-04bh3f9lmcpb0m3779li4aesv06t1rhf.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
-
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken("1026629804794-04bh3f9lmcpb0m3779li4aesv06t1rhf.apps.googleusercontent.com").requestEmail().build()
         val googleClient = GoogleSignIn.getClient(context, gso)
-
-        googleClient.signOut().addOnCompleteListener {
-            val signInIntent = googleClient.signInIntent
-            googleLauncher.launch(signInIntent)
-        }
+        googleClient.signOut().addOnCompleteListener { googleLauncher.launch(googleClient.signInIntent) }
     }
 
+    // --- UI DESIGN (Rasmdagidek) ---
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ArenaBlack)
-            .padding(24.dp)
+            .background(ArenaBlack) // Qora fon
     ) {
-        // HEADER
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("STATUS: SECURE", color = ArenaGreen, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
-            Text("NODE: 74.125.224.72", color = ArenaGreen, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
-        }
+        // Tepadagi yashil gradient
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp)
+                .background(Brush.verticalGradient(colors = listOf(Color(0xFF004400), Color.Transparent)))
+                .align(Alignment.TopCenter)
+        )
 
         Column(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.Center
         ) {
-            Text("SYSTEM LOGIN", color = ArenaGreen, fontSize = 32.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
-            Text("AUTHENTICATION REQUIRED", color = Color.Gray, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            ArenaTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = "CODENAME (EMAIL)",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            // Sarlavha
+            Text(
+                text = "SYSTEM LOGIN",
+                color = ArenaGreen,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                textAlign = TextAlign.Center
             )
 
-            ArenaTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = "PASSCODE",
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = {
-                    val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(imageVector = image, contentDescription = "Toggle", tint = ArenaGreen)
-                    }
-                }
-            )
+            Spacer(modifier = Modifier.height(40.dp))
 
-            if (errorMessage.isNotEmpty()) {
-                Text(errorMessage, color = Color.Red, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+            // Email Input
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text("EMAIL / USERNAME", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    placeholder = { Text("Enter your email or username", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .border(1.dp, Color.Transparent, RoundedCornerShape(12.dp)), // Oq ramka
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color.Black,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    singleLine = true
+                )
             }
 
-            // PASSWORD LOGIN BUTTON
-            ArenaButton(
-                text = "ACCESS",
-                isOutline = true,
-                isLoading = isLoading,
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Password Input
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text("PASSWORD", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    placeholder = { Text("Enter your password", color = Color.Gray) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color.Black,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                imageVector = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                                contentDescription = null,
+                                tint = Color.Gray
+                            )
+                        }
+                    },
+                    singleLine = true
+                )
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // LOGIN BUTTON (Yashil)
+            Button(
                 onClick = {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
                         isLoading = true
                         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    checkAndCreateUserInDb()
-                                } else {
-                                    isLoading = false
-                                    errorMessage = "ACCESS DENIED"
-                                }
-                            }
+                            .addOnCompleteListener { if (it.isSuccessful) checkAndCreateUserInDb() else { isLoading = false; errorMessage = "Login Failed" } }
                     }
-                }
-            )
-
-            Text("- OR -", color = Color.Gray, fontSize = 10.sp)
-
-            // GOOGLE BUTTON (Yashil ramkali, qora fon)
-            Button(
-                onClick = { startGoogleSignIn() },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
-                border = BorderStroke(1.dp, ArenaGreen), // YASHIL CHIZIQ
-                modifier = Modifier.fillMaxWidth().height(50.dp),
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = ArenaGreen),
                 shape = RoundedCornerShape(50)
             ) {
-                // Rangli Google yozuvi
-                Text("G", color = Color.Red, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("o", color = Color(0xFFFFA500), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("o", color = Color.Yellow, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("g", color = Color.Blue, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("l", color = Color.Green, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text("e", color = Color.Red, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Spacer(modifier = Modifier.width(10.dp))
-                Text("CONTINUE WITH GOOGLE", color = Color.White, fontWeight = FontWeight.Bold)
+                if (isLoading) {
+                    CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(24.dp))
+                } else {
+                    Text("LOGIN", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text("Forgot Password?", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.clickable { /* TODO */ })
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // GOOGLE BUTTON (Oq)
+            Button(
+                onClick = { startGoogleSignIn() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                shape = RoundedCornerShape(50)
+            ) {
+                // Oddiy Google yozuvi (Rasmdagidek)
+                // Agar sizda google icon bo'lsa Image() ishlating
+                Text("Continue with Google", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Row {
+                Text("Don't have an account? ", color = Color.Gray, fontSize = 12.sp)
+                Text("Sign Up", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp, modifier = Modifier.clickable { navController.navigate(Screen.Signup.route) })
             }
         }
-
-        // SIGNUP LINK
-        Text(
-            text = "NO ID? JOIN THE GRID ->",
-            color = Color.Gray,
-            fontSize = 12.sp,
-            fontFamily = FontFamily.Monospace,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 40.dp)
-                .clickable { navController.navigate(Screen.Signup.route) }
-        )
     }
 }
