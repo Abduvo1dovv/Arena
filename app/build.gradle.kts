@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.arena"
-        minSdk = 25 //24 edi eskisi
+        minSdk = 25 
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -23,7 +23,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true //false
+            isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -32,7 +32,7 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8  // <--- SHU KERAK
+        sourceCompatibility = JavaVersion.VERSION_1_8  
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
@@ -63,14 +63,14 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
 
-    // 2. Firebase modullari (Versiya raqamisiz!)
+    
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-analytics")
 
-    // ----------------------------------------------------------------
-    // 3. UI VA NAVIGATION (Sizdagi bor kodlar)
-    // ----------------------------------------------------------------
+    
+    
+    
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
@@ -80,16 +80,16 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
 
-    // Qo'shimcha ikonka va navigatsiya
+    
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material:material-icons-extended:1.6.3")
 
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
-    // 2. BIOMETRIC (Barmoq izi)
+    
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
 
-    implementation("androidx.activity:activity-compose:1.8.2") // Yoki 1.9.0
+    implementation("androidx.activity:activity-compose:1.8.2") 
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     val cameraVersion = "1.4.1"
@@ -97,13 +97,13 @@ dependencies {
     implementation("androidx.camera:camera-camera2:$cameraVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraVersion")
     implementation("androidx.camera:camera-video:$cameraVersion")
-    implementation("androidx.camera:camera-view:$cameraVersion") // OutputFileOptions shu yerda!
+    implementation("androidx.camera:camera-view:$cameraVersion") 
     implementation("androidx.camera:camera-extensions:$cameraVersion")
 
-    // 2. RUXSATLAR (Permissions)
+    
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
-    // 3. RASMNI KO'RSATISH (Coil)
+    
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     implementation("androidx.wear.compose:compose-material:1.3.0")

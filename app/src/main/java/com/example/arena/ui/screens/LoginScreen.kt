@@ -68,7 +68,7 @@ fun LoginScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // --- AUTH LOGIC ---
+
     fun checkAndCreateUserInDb() {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
@@ -125,13 +125,13 @@ fun LoginScreen(navController: NavController) {
             .addOnCompleteListener { googleLauncher.launch(googleClient.signInIntent) }
     }
 
-    // --- UI DESIGN (Rasmdagidek) ---
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ArenaBlack) // Qora fon
+            .background(ArenaBlack)
     ) {
-        // Tepadagi yashil gradient
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -154,7 +154,7 @@ fun LoginScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Sarlavha
+
             Text(
                 text = "SYSTEM LOGIN",
                 color = ArenaGreen,
@@ -166,7 +166,7 @@ fun LoginScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Email Input
+
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     "EMAIL / USERNAME",
@@ -182,7 +182,7 @@ fun LoginScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
-                        .border(1.dp, Color.Transparent, RoundedCornerShape(12.dp)), // Oq ramka
+                        .border(1.dp, Color.Transparent, RoundedCornerShape(12.dp)),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
@@ -198,7 +198,7 @@ fun LoginScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Password Input
+
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     "PASSWORD",
@@ -239,7 +239,7 @@ fun LoginScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // LOGIN BUTTON (Yashil)
+
             Button(
                 onClick = {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
@@ -280,7 +280,7 @@ fun LoginScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // GOOGLE BUTTON (Oq)
+
             Button(
                 onClick = { startGoogleSignIn() },
                 modifier = Modifier
@@ -289,8 +289,8 @@ fun LoginScreen(navController: NavController) {
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 shape = RoundedCornerShape(50)
             ) {
-                // Oddiy Google yozuvi (Rasmdagidek)
-                // Agar sizda google icon bo'lsa Image() ishlating
+
+
                 Text(
                     "Continue with Google",
                     color = Color.Black,

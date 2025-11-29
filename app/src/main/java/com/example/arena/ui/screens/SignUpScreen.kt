@@ -65,7 +65,7 @@ fun SignUpScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    // --- LOGIKA ---
+
     fun saveUserToDb(uid: String) {
         val db = FirebaseFirestore.getInstance()
         val userRef = db.collection("users").document(uid)
@@ -90,13 +90,13 @@ fun SignUpScreen(navController: NavController) {
             }
     }
 
-    // --- UI DIZAYN (RASMDAGIDEK) ---
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(ArenaBlack)
     ) {
-        // TEPADAGI YASHIL GRADIENT
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,7 +116,7 @@ fun SignUpScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // SARLAVHA
+
             Text(
                 text = "JOIN THE GRID",
                 color = Color.White,
@@ -128,9 +128,9 @@ fun SignUpScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // 1. USERNAME INPUT
+
             Column(modifier = Modifier.fillMaxWidth()) {
-                // Label kerak emas, placeholder ichida
+
                 TextField(
                     value = username,
                     onValueChange = { username = it },
@@ -140,7 +140,7 @@ fun SignUpScreen(navController: NavController) {
                         .clip(RoundedCornerShape(12.dp))
                         .border(1.dp, Color(0xFF333333), RoundedCornerShape(12.dp)),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color(0xFF111111), // To'q fon
+                        focusedContainerColor = Color(0xFF111111),
                         unfocusedContainerColor = Color(0xFF111111),
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -154,7 +154,7 @@ fun SignUpScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 2. EMAIL INPUT
+
             Column(modifier = Modifier.fillMaxWidth()) {
                 TextField(
                     value = email,
@@ -180,7 +180,7 @@ fun SignUpScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 3. PASSWORD INPUT
+
             Column(modifier = Modifier.fillMaxWidth()) {
                 TextField(
                     value = password,
@@ -216,7 +216,7 @@ fun SignUpScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // CREATE ACCOUNT BUTTON
+
             Button(
                 onClick = {
                     if (email.isNotEmpty() && password.isNotEmpty() && username.isNotEmpty()) {
@@ -261,7 +261,7 @@ fun SignUpScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // LOGIN LINK
+
             Row {
                 Text("Already have an account? ", color = Color.Gray, fontSize = 12.sp)
                 Text(
@@ -273,7 +273,7 @@ fun SignUpScreen(navController: NavController) {
                 )
             }
 
-            // TERMS (Pastki qism)
+
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 "By creating an account, you agree to our Terms of Service and Privacy Policy.",

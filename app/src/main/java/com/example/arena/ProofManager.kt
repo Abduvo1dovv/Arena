@@ -1,6 +1,6 @@
 package com.example.arena
 
-// Bu bizning "Global Seyfimiz". Kamera bunga soladi, Home bundan oladi.
+
 object ProofManager {
     private var result: Pair<String, String>? = null
 
@@ -12,7 +12,7 @@ object ProofManager {
 
     fun getResult(): Pair<String, String>? {
         val temp = result
-        result = null // Olgandan keyin o'chirib tashlaymiz (bir marta ishlatish uchun)
+        result = null
         return temp
     }
 }

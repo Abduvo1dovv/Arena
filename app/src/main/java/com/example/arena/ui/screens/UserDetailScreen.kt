@@ -71,13 +71,13 @@ import kotlinx.coroutines.tasks.await
 fun UserDetailScreen(navController: NavController, userId: String) {
     val context = LocalContext.current
 
-    // STATE
+
     var targetUser by remember { mutableStateOf<User?>(null) }
     var targetChallenges by remember { mutableStateOf<List<Challenge>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
-    var selectedTab by remember { mutableIntStateOf(0) } // 0=Active, 1=History
+    var selectedTab by remember { mutableIntStateOf(0) }
 
-    // User Data
+
     var myCoins by remember { mutableStateOf(0) }
     var isFollowing by remember { mutableStateOf(false) }
 
@@ -85,16 +85,16 @@ fun UserDetailScreen(navController: NavController, userId: String) {
     val currentUserName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Gladiator"
     val investmentAmount = 50.0
 
-    // MA'LUMOTLARNI YUKLASH
+
     LaunchedEffect(userId) {
         try {
             val db = FirebaseFirestore.getInstance()
 
-            // Target User
+
             val doc = db.collection("users").document(userId).get().await()
             targetUser = doc.toObject(User::class.java)
 
-            // Current User & Follow Status
+
             if (currentUserId != null) {
                 val myDoc = db.collection("users").document(currentUserId).get().await()
                 myCoins = myDoc.getLong("coins")?.toInt() ?: 0
@@ -104,7 +104,7 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                 isFollowing = followDoc.exists()
             }
 
-            // Challenges
+
             val challengesSnapshot = db.collection("challenges")
                 .whereEqualTo("userId", userId)
                 .get()
@@ -119,7 +119,7 @@ fun UserDetailScreen(navController: NavController, userId: String) {
         }
     }
 
-    // --- FOLLOW LOGIKASI ---
+
     fun toggleFollow() {
         if (currentUserId == null) return
         val db = FirebaseFirestore.getInstance()
@@ -128,7 +128,7 @@ fun UserDetailScreen(navController: NavController, userId: String) {
         val targetRef = db.collection("users").document(userId)
 
         if (isFollowing) {
-            // UNFOLLOW
+
             batch.delete(targetRef.collection("followers").document(currentUserId))
             batch.delete(myRef.collection("following").document(userId))
             batch.update(targetRef, "followersCount", FieldValue.increment(-1))
@@ -151,7 +151,7 @@ fun UserDetailScreen(navController: NavController, userId: String) {
             targetUser = targetUser?.copy(followersCount = targetUser!!.followersCount - 1)
             Toast.makeText(context, "Unfollowed", Toast.LENGTH_SHORT).show()
         } else {
-            // FOLLOW
+
             batch.set(
                 targetRef.collection("followers").document(currentUserId),
                 mapOf("uid" to currentUserId)
@@ -180,7 +180,7 @@ fun UserDetailScreen(navController: NavController, userId: String) {
         batch.commit()
     }
 
-    // --- INVEST LOGIKASI ---
+
     fun invest() {
         if (currentUserId == null) return
         if (myCoins < investmentAmount) {
@@ -193,12 +193,12 @@ fun UserDetailScreen(navController: NavController, userId: String) {
         val myRef = db.collection("users").document(currentUserId)
         val targetRef = db.collection("users").document(userId)
 
-        // 1. Mendan pul yechish
+
         batch.update(myRef, "coins", myCoins - investmentAmount.toInt())
-        // 2. Target narxini oshirish
+
         batch.update(targetRef, "marketValue", FieldValue.increment(10.0))
 
-        // 3. Notification
+
         val notifRef = db.collection("notifications").document()
         batch.set(
             notifRef, Notification(
@@ -219,10 +219,12 @@ fun UserDetailScreen(navController: NavController, userId: String) {
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(ArenaBlack)) {
-        // Orqa fon gradienti
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ArenaBlack)
+    ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -241,7 +243,7 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                // HEADER
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -273,9 +275,9 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                     }
                 }
 
-                // PROFILE INFO
+
                 Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                    // Avatar va Ism
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val avatarUrl =
                             "https://api.dicebear.com/9.x/notionists/png?seed=${targetUser!!.uid}&backgroundColor=00ff41"
@@ -295,14 +297,14 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold
                             )
-                            // MARKET VALUE (O'ZGARTIRILDI: CAPITAL / REPUTATION SO'ZIGA MOSLASH)
+
                             Text(
                                 "${stringResource(R.string.capital)}: $${targetUser!!.marketValue}",
                                 color = ArenaGreen,
                                 fontSize = 14.sp,
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Bold
-                            ) // <--- TARJIMA
+                            )
                         }
                     }
 
@@ -314,12 +316,12 @@ fun UserDetailScreen(navController: NavController, userId: String) {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // --- ACTION BUTTONS ---
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // FOLLOW / UNFOLLOW
+
                         Button(
                             onClick = { toggleFollow() },
                             modifier = Modifier
@@ -335,16 +337,16 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            // TARJIMA
+
                             Text(
                                 text = if (isFollowing) stringResource(R.string.unfollow) else stringResource(
                                     R.string.follow
-                                ), // <--- TARJIMA
+                                ),
                                 color = Color.White, fontWeight = FontWeight.SemiBold
                             )
                         }
 
-                        // MESSAGE
+
                         Button(
                             onClick = { navController.navigate(Screen.Chat.createRoute(userId)) },
                             modifier = Modifier
@@ -360,18 +362,18 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            // TARJIMA
+
                             Text(
                                 stringResource(R.string.message),
                                 color = Color.White,
                                 fontWeight = FontWeight.SemiBold
-                            ) // <--- TARJIMA
+                            )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // INVEST BUTTON
+
                     Button(
                         onClick = { invest() },
                         modifier = Modifier
@@ -380,44 +382,44 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                         colors = ButtonDefaults.buttonColors(containerColor = ArenaGreen),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        // TARJIMA: INVEST $50
+
                         Text(
                             "${stringResource(R.string.invest)} $50 🚀",
                             color = ArenaBlack,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
-                        ) // <--- TARJIMA
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // STATS ROW
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // TARJIMA: FOLLOWERS / FOLLOWING / WIN RATE
+
                         StatItem(
                             formatStatNumber(targetUser!!.followersCount),
                             stringResource(R.string.followers)
-                        ) { // <--- TARJIMA
+                        ) {
                             navController.navigate(Screen.UserList.createRoute(userId, "followers"))
                         }
 
                         StatItem(
                             formatStatNumber(targetUser!!.followingCount),
                             stringResource(R.string.following)
-                        ) { // <--- TARJIMA
+                        ) {
                             navController.navigate(Screen.UserList.createRoute(userId, "following"))
                         }
 
-                        StatItem("0%", stringResource(R.string.win_rate)) {} // <--- TARJIMA
+                        StatItem("0%", stringResource(R.string.win_rate)) {}
                     }
                 }
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                // TABS
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -426,15 +428,15 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                 ) {
                     TabItem(stringResource(R.string.active_bets), selectedTab == 0) {
                         selectedTab = 0
-                    } // <--- TARJIMA
+                    }
                     TabItem(stringResource(R.string.history), selectedTab == 1) {
                         selectedTab = 1
-                    } // <--- TARJIMA
+                    }
                 }
                 Divider(color = Color(0xFF222222), thickness = 1.dp)
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // CONTENT LIST
+
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     val filteredChallenges = when (selectedTab) {
                         0 -> targetChallenges.filter { it.status == "ACTIVE" || it.status == "PENDING" }
@@ -450,12 +452,12 @@ fun UserDetailScreen(navController: NavController, userId: String) {
                                 .border(1.dp, Color(0xFF222222), RoundedCornerShape(12.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            // TARJIMA: No data available
+
                             Text(
                                 stringResource(R.string.no_cases),
                                 color = Color.Gray,
                                 fontFamily = FontFamily.Monospace
-                            ) // <--- TARJIMA (No cases to judge - ma'nosiga yaqin)
+                            )
                         }
                     } else {
                         filteredChallenges.forEach { challenge ->
@@ -469,7 +471,7 @@ fun UserDetailScreen(navController: NavController, userId: String) {
     }
 }
 
-// YORDAMCHILAR
+
 @Composable
 fun StatItem(value: String, label: String, onClick: () -> Unit) {
     Column(
@@ -489,7 +491,7 @@ fun StatItem(value: String, label: String, onClick: () -> Unit) {
     }
 }
 
-// FUNKSIYA NOMI O'ZGARTIRILGAN (formatStatNumber)
+
 private fun formatStatNumber(count: Int): String {
     return when {
         count >= 1000000 -> String.format("%.1fM", count / 1000000.0)

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.example.arena.ui.theme.ArenaBlack
 import com.example.arena.ui.theme.ArenaGreen
 
-// 1. ARENA INPUT FIELD (Yangilandi: Icon qo'shildi)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArenaTextField(
@@ -33,7 +33,7 @@ fun ArenaTextField(
     label: String,
     visualTransformation: androidx.compose.ui.text.input.VisualTransformation = androidx.compose.ui.text.input.VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    trailingIcon: @Composable (() -> Unit)? = null // Qo'shimcha ikonka (ko'zcha) uchun
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
     Column {
         Text(
@@ -62,22 +62,22 @@ fun ArenaTextField(
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
             singleLine = true,
-            trailingIcon = trailingIcon // Icon shu yerga tushadi
+            trailingIcon = trailingIcon
         )
     }
 }
 
-// 2. ARENA BUTTON (Loading holati qo'shildi)
+
 @Composable
 fun ArenaButton(
     text: String,
     onClick: () -> Unit,
     isOutline: Boolean = false,
-    isLoading: Boolean = false // Loading bormi?
+    isLoading: Boolean = false
 ) {
     Button(
         onClick = onClick,
-        enabled = !isLoading, // Loading paytida bosib bo'lmaydi
+        enabled = !isLoading,
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),

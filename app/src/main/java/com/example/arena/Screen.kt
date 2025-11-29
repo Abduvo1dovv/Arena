@@ -9,7 +9,6 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settings_screen")
 
 
-
     object Search : Screen("search_screen")
     object Profile : Screen("profile_screen")
     object Notifications : Screen("notifications_screen")
@@ -27,14 +26,17 @@ sealed class Screen(val route: String) {
     object UserDetail : Screen("user_detail_screen/{userId}") {
         fun createRoute(userId: String) = "user_detail_screen/$userId"
     }
+
     object ProofCamera : Screen("proof_camera_screen/{challengeId}") {
         fun createRoute(challengeId: String) = "proof_camera_screen/$challengeId"
     }
+
     object UserList : Screen("user_list_screen/{userId}/{listType}") {
         fun createRoute(userId: String, listType: String) = "user_list_screen/$userId/$listType"
     }
+
     object ProofManager {
-        var capturedData: Pair<String, String>? = null // (ChallengeID, RasmURL)
+        var capturedData: Pair<String, String>? = null
     }
 
 }

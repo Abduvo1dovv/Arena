@@ -47,18 +47,18 @@ fun SlideToConfirmButton(
 
     val swipeableState = rememberSwipeableState(0)
     val sizePx = with(LocalDensity.current) { (width - dragSize).toPx() }
-    val anchors = mapOf(0f to 0, sizePx to 1) // 0 = Boshlanish, 1 = Tugatish
+    val anchors = mapOf(0f to 0, sizePx to 1)
 
-    // Agar oxiriga yetib borsa
+
     if (swipeableState.currentValue == 1) {
         LaunchedEffect(Unit) {
             onConfirm()
-            // Qaytarish (ixtiyoriy)
-            // swipeableState.snapTo(0)
+
+
         }
     }
 
-    // Progress (Rangni o'zgartirish uchun)
+
     val progress = (swipeableState.offset.value / sizePx).coerceIn(0f, 1f)
     val alpha by animateFloatAsState(targetValue = 1f - progress)
 
@@ -67,15 +67,15 @@ fun SlideToConfirmButton(
             .width(width)
             .height(60.dp)
             .clip(RoundedCornerShape(50))
-            .background(Color(0xFF1A1A1A)) // To'q fon
+            .background(Color(0xFF1A1A1A))
             .swipeable(
                 state = swipeableState,
                 anchors = anchors,
-                thresholds = { _, _ -> FractionalThreshold(0.8f) }, // 80% surish kerak
+                thresholds = { _, _ -> FractionalThreshold(0.8f) },
                 orientation = Orientation.Horizontal
             )
     ) {
-        // O'rtadagi yozuv (Surilayotganda yo'qoladi)
+
         Text(
             text = text,
             color = Color.White,
@@ -86,7 +86,7 @@ fun SlideToConfirmButton(
                 .alpha(alpha)
         )
 
-        // Suriladigan dumaloq (Thumb)
+
         Box(
             modifier = Modifier
                 .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }

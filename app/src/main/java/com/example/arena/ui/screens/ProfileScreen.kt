@@ -78,16 +78,16 @@ fun ProfileScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(true) }
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
-    // --- DELETE UCHUN STATE ---
+
     var showDeleteDialog by remember { mutableStateOf(false) }
     var challengeToDelete by remember { mutableStateOf<Challenge?>(null) }
 
-    // DATA LOADING (REAL-TIME)
+
     LaunchedEffect(Unit) {
         if (currentUserId != null) {
             val db = FirebaseFirestore.getInstance()
 
-            // 1. USER INFO LISTENER (JONLI)
+
             db.collection("users").document(currentUserId)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) return@addSnapshotListener
@@ -99,13 +99,14 @@ fun ProfileScreen(navController: NavController) {
                     }
                 }
 
-            // 2. HISTORY LISTENER (JONLI)
+
             db.collection("challenges")
                 .whereEqualTo("userId", currentUserId)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) return@addSnapshotListener
                     if (snapshot != null) {
-                        myHistory = snapshot.toObjects(Challenge::class.java).sortedByDescending { it.startTime }
+                        myHistory = snapshot.toObjects(Challenge::class.java)
+                            .sortedByDescending { it.startTime }
                     }
                     isLoading = false
                 }
@@ -117,7 +118,7 @@ fun ProfileScreen(navController: NavController) {
         navController.navigate(Screen.Login.route) { popUpTo(0) }
     }
 
-    // --- DELETE FUNCTION ---
+
     fun deleteChallenge() {
         val challenge = challengeToDelete ?: return
         val db = FirebaseFirestore.getInstance()
@@ -134,8 +135,10 @@ fun ProfileScreen(navController: NavController) {
             }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(ArenaBlack)) {
-        // GRADIENT BACKDROP (Orqada)
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(ArenaBlack)) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -144,41 +147,50 @@ fun ProfileScreen(navController: NavController) {
         )
 
         if (isLoading) {
-            CircularProgressIndicator(color = ArenaGreen, modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(
+                color = ArenaGreen,
+                modifier = Modifier.align(Alignment.Center)
+            )
         } else if (user != null) {
-            // ASOSIY SCROLL
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .statusBarsPadding()
             ) {
-                // --- HEADER (Settings) ---
+
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
                     IconButton(onClick = { navController.navigate(Screen.Settings.route) }) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.Gray)
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.Gray
+                        )
                     }
                 }
 
-                // --- SCROLLABLE CONTENT ---
+
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(bottom = 100.dp), // Bottom Bar uchun joy
+                    contentPadding = PaddingValues(bottom = 100.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 ) {
-                    // 1. AVATAR & INFO
+
                     item(span = { GridItemSpan(2) }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                            // --- AVATAR MANTIGI (O'ZGARTIRILDI) ---
+
                             val avatarUrl = if (user!!.avatarUrl.isNotEmpty()) {
-                                user!!.avatarUrl // Agar yuklangan rasm bo'lsa
+                                user!!.avatarUrl
                             } else {
-                                "https://api.dicebear.com/9.x/notionists/png?seed=${user!!.uid}&backgroundColor=00ff41" // Bo'lmasa default
+                                "https://api.dicebear.com/9.x/notionists/png?seed=${user!!.uid}&backgroundColor=00ff41"
                             }
 
                             Box(
@@ -214,45 +226,79 @@ fun ProfileScreen(navController: NavController) {
                         }
                     }
 
-                    // 2. ACTION BUTTONS
+
                     item(span = { GridItemSpan(2) }) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Button(
                                 onClick = { navController.navigate(Screen.EditProfile.route) },
-                                modifier = Modifier.weight(1f).height(45.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A1A1A)),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(45.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(
+                                        0xFF1A1A1A
+                                    )
+                                ),
                                 shape = RoundedCornerShape(50)
                             ) {
-                                Text(stringResource(R.string.edit_profile), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Text(
+                                    stringResource(R.string.edit_profile),
+                                    color = Color.White,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
                             }
                             Button(
                                 onClick = { performLogout() },
-                                modifier = Modifier.weight(1f).height(45.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A1A1A)),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(45.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(
+                                        0xFF1A1A1A
+                                    )
+                                ),
                                 shape = RoundedCornerShape(50)
                             ) {
-                                Text(stringResource(R.string.log_out), color = ArenaRed, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                                Text(
+                                    stringResource(R.string.log_out),
+                                    color = ArenaRed,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
                             }
                         }
                     }
 
-                    // 3. STATS CARDS
+
                     item(span = { GridItemSpan(2) }) {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             StatBox("followers", formatNumber(followersCount)) {
-                                if (followersCount > 0) navController.navigate(Screen.UserList.createRoute(currentUserId!!, "followers"))
+                                if (followersCount > 0) navController.navigate(
+                                    Screen.UserList.createRoute(
+                                        currentUserId!!,
+                                        "followers"
+                                    )
+                                )
                             }
                             StatBox("following", formatNumber(followingCount)) {
-                                if (followingCount > 0) navController.navigate(Screen.UserList.createRoute(currentUserId!!, "following"))
+                                if (followingCount > 0) navController.navigate(
+                                    Screen.UserList.createRoute(
+                                        currentUserId!!,
+                                        "following"
+                                    )
+                                )
                             }
                             StatBox("net_worth", "$${user!!.marketValue.toInt()}", isGreen = true)
                         }
                     }
 
-                    // 4. HISTORY TITLE
+
                     item(span = { GridItemSpan(2) }) {
                         Text(
                             text = stringResource(R.string.challenge_history),
@@ -263,10 +309,15 @@ fun ProfileScreen(navController: NavController) {
                         )
                     }
 
-                    // 5. HISTORY CARDS
+
                     if (myHistory.isEmpty()) {
                         item(span = { GridItemSpan(2) }) {
-                            Text("No history yet.", color = Color.Gray, fontSize = 14.sp, fontFamily = FontFamily.Monospace)
+                            Text(
+                                "No history yet.",
+                                color = Color.Gray,
+                                fontSize = 14.sp,
+                                fontFamily = FontFamily.Monospace
+                            )
                         }
                     } else {
                         items(myHistory) { challenge ->
@@ -283,16 +334,24 @@ fun ProfileScreen(navController: NavController) {
             }
         }
 
-        // --- DELETE DIALOG ---
+
         if (showDeleteDialog && challengeToDelete != null) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 containerColor = Color(0xFF1A1A1A),
                 title = {
-                    Text("DELETE RECORD?", color = ArenaGreen, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                    Text(
+                        "DELETE RECORD?",
+                        color = ArenaGreen,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace
+                    )
                 },
                 text = {
-                    Text("This challenge will be permanently removed from your history.", color = Color.Gray)
+                    Text(
+                        "This challenge will be permanently removed from your history.",
+                        color = Color.Gray
+                    )
                 },
                 confirmButton = {
                     Button(
@@ -313,10 +372,15 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun RowScope.StatBox(resourceIdName: String, value: String, isGreen: Boolean = false, onClick: () -> Unit = {}) {
+fun RowScope.StatBox(
+    resourceIdName: String,
+    value: String,
+    isGreen: Boolean = false,
+    onClick: () -> Unit = {}
+) {
     val textColor = if (isGreen) ArenaGreen else Color.White
 
-    val label = when(resourceIdName) {
+    val label = when (resourceIdName) {
         "followers" -> stringResource(R.string.followers)
         "following" -> stringResource(R.string.following)
         "net_worth" -> stringResource(R.string.net_worth)
@@ -335,7 +399,13 @@ fun RowScope.StatBox(resourceIdName: String, value: String, isGreen: Boolean = f
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = value, color = textColor, fontSize = 20.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.SansSerif)
+        Text(
+            text = value,
+            color = textColor,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.SansSerif
+        )
         Spacer(modifier = Modifier.height(4.dp))
         Text(text = label, color = Color.Gray, fontSize = 12.sp)
     }
@@ -365,8 +435,11 @@ fun HistoryCard(
             )
     ) {
         if (hasImage) {
-            // Video thumbnail fix
-            val imageUrl = if (challenge.proofUrl.endsWith(".mp4")) challenge.proofUrl.replace(".mp4", ".jpg") else challenge.proofUrl
+
+            val imageUrl = if (challenge.proofUrl.endsWith(".mp4")) challenge.proofUrl.replace(
+                ".mp4",
+                ".jpg"
+            ) else challenge.proofUrl
 
             AsyncImage(
                 model = imageUrl,
@@ -376,7 +449,18 @@ fun HistoryCard(
                 alpha = 0.6f
             )
         } else {
-            Box(modifier = Modifier.fillMaxSize().background(Brush.linearGradient(colors = listOf(Color(0xFF222222), Color.Black))))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFF222222),
+                                Color.Black
+                            )
+                        )
+                    )
+            )
         }
 
         Text(
@@ -384,7 +468,9 @@ fun HistoryCard(
             color = Color.White,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.BottomStart).padding(12.dp)
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(12.dp)
         )
 
         Box(
@@ -394,7 +480,12 @@ fun HistoryCard(
                 .background(badgeColor, RoundedCornerShape(50))
                 .padding(horizontal = 8.dp, vertical = 2.dp)
         ) {
-            Text(text = badgeText, color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = badgeText,
+                color = Color.Black,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

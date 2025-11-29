@@ -85,7 +85,7 @@ fun ProofCameraScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // 1. Cloudinary Init
+
     val CLOUD_NAME = "dl1vh3hen"
     val UPLOAD_PRESET = "arena_upload"
     LaunchedEffect(Unit) {
@@ -95,7 +95,7 @@ fun ProofCameraScreen(
         }
     }
 
-    // 2. Permissions
+
     val permissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.CAMERA,
@@ -103,24 +103,24 @@ fun ProofCameraScreen(
         )
     )
 
-    // Avtomatik ruxsat so'rash (faqat bir marta)
+
     LaunchedEffect(Unit) {
         if (!permissionsState.allPermissionsGranted) {
             permissionsState.launchMultiplePermissionRequest()
         }
     }
 
-    // State Variables
+
     var capturedVideoUri by remember { mutableStateOf<Uri?>(null) }
     var capturedVideoFile by remember { mutableStateOf<File?>(null) }
     var isUploading by remember { mutableStateOf(false) }
     var isRecording by remember { mutableStateOf(false) }
     var uploadStatus by remember { mutableStateOf("UPLOADING VIDEO...") }
 
-    // --- CAMERA ENGINE ---
+
     val previewView = remember { PreviewView(context) }
 
-    // Video Capture uchun Recorder yaratish (remember ichida, qayta yaratilmasligi uchun)
+
     val videoCapture = remember {
         val recorder = Recorder.Builder()
             .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
@@ -130,7 +130,7 @@ fun ProofCameraScreen(
 
     var activeRecording: Recording? by remember { mutableStateOf(null) }
 
-    // Ruxsat berilganda kamerani yoqish
+
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         if (permissionsState.allPermissionsGranted) {
             val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -138,13 +138,13 @@ fun ProofCameraScreen(
                 try {
                     val cameraProvider = cameraProviderFuture.get()
 
-                    // Preview
+
                     val preview = Preview.Builder().build()
-                    preview.setSurfaceProvider(previewView.surfaceProvider)
+                    preview.surfaceProvider = previewView.surfaceProvider
 
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-                    // Avval eskisini o'chirib, keyin ulaymiz (Crashdan himoya)
+
                     cameraProvider.unbindAll()
 
                     cameraProvider.bindToLifecycle(
@@ -160,16 +160,16 @@ fun ProofCameraScreen(
         }
     }
 
-    // --- VIDEO YOZISH FUNKSIYASI (FIXED) ---
-    @SuppressLint("MissingPermission") // <--- BU QATOR QIZIL CHIZIQNI YO'QOTADI
+
+    @SuppressLint("MissingPermission")
     fun toggleRecording() {
         if (isRecording) {
-            // STOP RECORDING
+
             activeRecording?.stop()
             activeRecording = null
             isRecording = false
         } else {
-            // START RECORDING
+
             val videoFile = File(
                 getOutputDirectory(context),
                 SimpleDateFormat(
@@ -178,25 +178,25 @@ fun ProofCameraScreen(
                 ).format(System.currentTimeMillis()) + ".mp4"
             )
 
-            // STANDART FileOutputOptions (Import xatosi bo'lmaydi)
+
             val outputOptions = FileOutputOptions.Builder(videoFile).build()
 
-            // Audio ruxsatini tekshiramiz
+
             val hasAudio = ContextCompat.checkSelfPermission(
                 context, Manifest.permission.RECORD_AUDIO
             ) == PermissionChecker.PERMISSION_GRANTED
 
             try {
-                // PendingRecording yaratish
+
                 var pendingRecording = videoCapture.output
                     .prepareRecording(context, outputOptions)
 
-                // Agar ruxsat bo'lsa audio qo'shamiz
+
                 if (hasAudio) {
                     pendingRecording = pendingRecording.withAudioEnabled()
                 }
 
-                // Yozishni boshlash
+
                 activeRecording =
                     pendingRecording.start(ContextCompat.getMainExecutor(context)) { event ->
                         when (event) {
@@ -226,12 +226,14 @@ fun ProofCameraScreen(
         }
     }
 
-    // --- UI ---
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(ArenaBlack)) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ArenaBlack)
+    ) {
         if (capturedVideoUri != null) {
-            // --- REVIEW VIDEO ---
+
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -343,12 +345,12 @@ fun ProofCameraScreen(
                 }
             }
         } else {
-            // --- CAMERA PREVIEW ---
+
             if (permissionsState.allPermissionsGranted) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     AndroidView(
                         factory = { ctx ->
-                            // PreviewViewni to'g'ri o'lchamda qaytarish
+
                             previewView.apply {
                                 layoutParams = ViewGroup.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -397,7 +399,7 @@ fun ProofCameraScreen(
                     }
                 }
             } else {
-                // Ruxsat yo'q bo'lsa - Loading
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

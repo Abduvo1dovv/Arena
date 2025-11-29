@@ -12,9 +12,9 @@ class BiometricAuth(private val context: Context) {
         val executor = ContextCompat.getMainExecutor(context)
         val biometricManager = BiometricManager.from(context)
 
-        // Telefonda barmoq izi bormi?
+
         if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) != BiometricManager.BIOMETRIC_SUCCESS) {
-            onSuccess() // Agar barmoq izi yo'q bo'lsa, o'tkazib yuboramiz
+            onSuccess()
             return
         }
 
@@ -24,7 +24,8 @@ class BiometricAuth(private val context: Context) {
             .setNegativeButtonText("Use Password")
             .build()
 
-        val biometricPrompt = BiometricPrompt(context as FragmentActivity, executor,
+        val biometricPrompt = BiometricPrompt(
+            context as FragmentActivity, executor,
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)

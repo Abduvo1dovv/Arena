@@ -97,7 +97,7 @@ fun CreateChallengeScreen(navController: NavController) {
 
     val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-    // Notification Permission Launcher
+
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
@@ -110,7 +110,7 @@ fun CreateChallengeScreen(navController: NavController) {
 
     LaunchedEffect(uid) {
         if (uid != null) {
-            // Android 13+ Notification Permission
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (ContextCompat.checkSelfPermission(
                         context,
@@ -164,7 +164,7 @@ fun CreateChallengeScreen(navController: NavController) {
                 calendar.add(Calendar.DAY_OF_YEAR, 1)
             }
 
-            // 1 soat oldin ogohlantirish
+
             val triggerTime = calendar.timeInMillis - (60 * 60 * 1000)
             val finalTriggerTime =
                 if (triggerTime > System.currentTimeMillis()) triggerTime else System.currentTimeMillis() + 5000
@@ -205,9 +205,11 @@ fun CreateChallengeScreen(navController: NavController) {
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(ArenaBlack)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ArenaBlack)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -229,7 +231,7 @@ fun CreateChallengeScreen(navController: NavController) {
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            // HEADER
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -241,7 +243,7 @@ fun CreateChallengeScreen(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = stringResource(R.string.create_contract), // <--- TARJIMA
+                    text = stringResource(R.string.create_contract),
                     color = Color.White,
                     fontSize = 20.sp,
                     fontFamily = FontFamily.Monospace,
@@ -253,13 +255,13 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // MISSION
+
             Text(
                 stringResource(R.string.mission_objective),
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp
-            ) // <--- TARJIMA
+            )
             Spacer(modifier = Modifier.height(8.dp))
             GlassTextField(
                 value = title,
@@ -269,13 +271,13 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // DETAILS
+
             Text(
                 stringResource(R.string.details),
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp
-            ) // <--- TARJIMA
+            )
             Spacer(modifier = Modifier.height(8.dp))
             GlassTextField(
                 value = description,
@@ -287,13 +289,13 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // MODE TYPE
+
             Text(
                 stringResource(R.string.mode_type),
                 color = ArenaGreen,
                 fontSize = 12.sp,
                 fontFamily = FontFamily.Monospace
-            ) // <--- TARJIMA
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -303,17 +305,17 @@ fun CreateChallengeScreen(navController: NavController) {
                     stringResource(R.string.one_shot),
                     Icons.Rounded.AccessTime,
                     !isRecurring
-                ) { isRecurring = false; selectedDurationVal = 24 } // <--- TARJIMA
+                ) { isRecurring = false; selectedDurationVal = 24 }
                 ModeSelectionButton(
                     stringResource(R.string.daily_habit),
                     Icons.Rounded.Repeat,
                     isRecurring
-                ) { isRecurring = true; selectedDurationVal = 30 } // <--- TARJIMA
+                ) { isRecurring = true; selectedDurationVal = 30 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // DEADLINE & DURATION
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -324,7 +326,7 @@ fun CreateChallengeScreen(navController: NavController) {
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
-                    ) // <--- TARJIMA
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(
                         modifier = Modifier
@@ -345,7 +347,7 @@ fun CreateChallengeScreen(navController: NavController) {
                     }
                 }
                 Column(modifier = Modifier.weight(1f)) {
-                    // DAYS or HOURS
+
                     Text(
                         if (isRecurring) "DAYS" else "HOURS",
                         color = Color.White,
@@ -380,15 +382,15 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // BET AMOUNT
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // DAILY STAKE or BET AMOUNT
+
                 val betText =
-                    if (isRecurring) stringResource(R.string.daily_stake) else stringResource(R.string.bet_amount) // <--- TARJIMA
+                    if (isRecurring) stringResource(R.string.daily_stake) else stringResource(R.string.bet_amount)
                 Text(betText, color = Color.White, fontWeight = FontWeight.Bold)
 
                 Text(
@@ -423,7 +425,7 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // RISKS & REWARDS
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -440,7 +442,7 @@ fun CreateChallengeScreen(navController: NavController) {
                             stringResource(R.string.total_risk),
                             color = Color.Gray,
                             fontSize = 16.sp
-                        ) // <--- TARJIMA
+                        )
                         Text(
                             "- $${totalBet}",
                             color = ArenaRed,
@@ -459,7 +461,7 @@ fun CreateChallengeScreen(navController: NavController) {
                             stringResource(R.string.potential_win),
                             color = Color.Gray,
                             fontSize = 16.sp
-                        ) // <--- TARJIMA
+                        )
                         Text(
                             "+ $${potentialReward}",
                             color = ArenaGreen,
@@ -472,10 +474,10 @@ fun CreateChallengeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // BUTTON
+
             Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 SlideToConfirmButton(
-                    text = if (isLoading) "CREATING..." else stringResource(R.string.slide_to_initiate), // <--- TARJIMA
+                    text = if (isLoading) "CREATING..." else stringResource(R.string.slide_to_initiate),
                     onConfirm = {
                         if (title.isEmpty() || userCoins < totalBet || uid == null) {
                             Toast.makeText(context, "INVALID DATA / FUNDS", Toast.LENGTH_SHORT)
@@ -533,7 +535,7 @@ fun CreateChallengeScreen(navController: NavController) {
     }
 }
 
-// YORDAMCHI KOMPONENTLAR (O'ZGARISHSIZ)
+
 @Composable
 fun GlassTextField(
     value: String,

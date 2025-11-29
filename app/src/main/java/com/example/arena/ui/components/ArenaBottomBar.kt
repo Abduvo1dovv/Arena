@@ -42,16 +42,16 @@ fun ArenaBottomBar(navController: NavController) {
                 0.5.dp,
                 Color(0xFF222222),
                 RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)
-            ) // Tepada ingichka chiziq
+            )
     ) {
-        // 1. HOME
+
         ArenaNavItem(
             icon = Icons.Default.Home,
             isSelected = currentRoute == Screen.Home.route,
             onClick = { navController.navigate(Screen.Home.route) }
         )
 
-        // 2. SEARCH
+
         ArenaNavItem(
             icon = Icons.Default.Search,
             isSelected = currentRoute == Screen.Search.route,
@@ -66,12 +66,12 @@ fun ArenaBottomBar(navController: NavController) {
 
 
         ArenaNavItem(
-            icon = Icons.Rounded.Gavel, // Sud bolg'asi
+            icon = Icons.Rounded.Gavel,
             isSelected = currentRoute == Screen.Feed.route,
             onClick = { navController.navigate(Screen.Feed.route) }
         )
 
-        // 5. PROFILE
+
         ArenaNavItem(
             icon = Icons.Default.Person,
             isSelected = currentRoute == Screen.Profile.route,
@@ -87,14 +87,14 @@ fun RowScope.ArenaNavItem(icon: ImageVector, isSelected: Boolean, onClick: () ->
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(26.dp), // Standart o'lcham
-                tint = if (isSelected) ArenaGreen else Color.Gray // Tanlanganda Yashil, bo'lmasa Kulrang
+                modifier = Modifier.size(26.dp),
+                tint = if (isSelected) ArenaGreen else Color.Gray
             )
         },
         selected = isSelected,
         onClick = onClick,
         colors = NavigationBarItemDefaults.colors(
-            indicatorColor = Color.Transparent // Orqasidagi dumaloq fonni olib tashlaymiz
+            indicatorColor = Color.Transparent
         )
     )
 }

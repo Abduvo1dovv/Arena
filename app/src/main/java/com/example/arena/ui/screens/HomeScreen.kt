@@ -86,17 +86,17 @@ fun HomeScreen(navController: NavController) {
     var challengeListener by remember { mutableStateOf<ListenerRegistration?>(null) }
     var userListener by remember { mutableStateOf<ListenerRegistration?>(null) }
 
-    // Notification badge
+
     var hasUnreadNotifications by remember { mutableStateOf(false) }
 
     val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-    // Real-time listener
+
     LaunchedEffect(uid) {
         if (uid != null) {
             val db = FirebaseFirestore.getInstance()
 
-            // User data
+
             userListener = db.collection("users").document(uid)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) return@addSnapshotListener
@@ -114,7 +114,7 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
-            // Challenges
+
             challengeListener = db.collection("challenges")
                 .whereEqualTo("userId", uid)
                 .whereEqualTo("status", "ACTIVE")
@@ -131,7 +131,7 @@ fun HomeScreen(navController: NavController) {
                     isLoading = false
                 }
 
-            // Notifications Badge
+
             db.collection("notifications").whereEqualTo("userId", uid).whereEqualTo("isRead", false)
                 .addSnapshotListener { s, _ -> hasUnreadNotifications = s != null && !s.isEmpty }
 
@@ -140,7 +140,7 @@ fun HomeScreen(navController: NavController) {
         }
     }
 
-    // Cleanup
+
     DisposableEffect(Unit) {
         onDispose {
             challengeListener?.remove()
@@ -148,7 +148,7 @@ fun HomeScreen(navController: NavController) {
         }
     }
 
-    // Submit Proof logic
+
     fun submitProofToTribunal(challengeId: String, proofUrl: String) {
         if (uid == null) return
         val challenge = challenges.find { it.id == challengeId } ?: return
@@ -194,7 +194,7 @@ fun HomeScreen(navController: NavController) {
             }
         }
         batch.commit().addOnSuccessListener {
-            // Bu yerdagi Textni ham kelajakda context.getString() bilan olish mumkin, lekin hozircha Toast.
+
             val msg =
                 if (challenge.type == "RECURRING" && challenge.currentDay < challenge.totalDays) "DAY COMPLETED! KEEP GOING!" else "SENT TO TRIBUNAL!"
             android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
@@ -215,7 +215,7 @@ fun HomeScreen(navController: NavController) {
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // UI
+
     Scaffold(
         containerColor = ArenaBlack,
         bottomBar = { /* MainActivity dagi BottomBar */ }
@@ -232,7 +232,7 @@ fun HomeScreen(navController: NavController) {
                     .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                // 1. HEADER
+
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -241,10 +241,10 @@ fun HomeScreen(navController: NavController) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.Top
                     ) {
-                        // Net Worth (Tarjima)
+
                         Column {
                             Text(
-                                text = stringResource(R.string.net_worth), // <--- TARJIMA
+                                text = stringResource(R.string.net_worth),
                                 color = Color.Gray,
                                 fontSize = 14.sp,
                                 fontFamily = FontFamily.SansSerif
@@ -260,7 +260,7 @@ fun HomeScreen(navController: NavController) {
                             )
                         }
 
-                        // Icons
+
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             IconButton(onClick = { navController.navigate(Screen.Inbox.route) }) {
                                 Icon(
@@ -293,7 +293,7 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
-                // 2. PERFORMANCE TREND (Tarjima)
+
                 item {
                     Card(
                         modifier = Modifier
@@ -310,7 +310,7 @@ fun HomeScreen(navController: NavController) {
                             ) {
                                 Column {
                                     Text(
-                                        text = stringResource(R.string.performance_trend), // <--- TARJIMA
+                                        text = stringResource(R.string.performance_trend),
                                         color = Color.White,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 16.sp
@@ -321,7 +321,7 @@ fun HomeScreen(navController: NavController) {
                                             text = stringResource(R.string.last_30_days),
                                             color = Color.Gray,
                                             fontSize = 12.sp
-                                        ) // <--- TARJIMA
+                                        )
                                         Text(
                                             text = "+${
                                                 String.format(
@@ -400,10 +400,10 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
-                // 3. ACTIVE OPERATIONS (Tarjima)
+
                 item {
                     Text(
-                        text = stringResource(R.string.active_operations), // <--- TARJIMA
+                        text = stringResource(R.string.active_operations),
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -422,7 +422,7 @@ fun HomeScreen(navController: NavController) {
                                 stringResource(R.string.no_active_challenges),
                                 color = Color.Gray,
                                 fontSize = 14.sp
-                            ) // <--- TARJIMA
+                            )
                         }
                     }
                 } else {

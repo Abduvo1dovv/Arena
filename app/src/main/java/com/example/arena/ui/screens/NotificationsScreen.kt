@@ -66,7 +66,7 @@ fun NotificationsScreen(navController: NavController) {
     var notifications by remember { mutableStateOf<List<Notification>>(emptyList()) }
     val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-    // --- LOGIKA (O'ZGARISHSIZ) ---
+
     LaunchedEffect(Unit) {
         if (uid != null) {
             try {
@@ -94,13 +94,13 @@ fun NotificationsScreen(navController: NavController) {
         }
     }
 
-    // --- UI ---
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(ArenaBlack)
     ) {
-        // 1. Orqa fon gradienti
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -120,8 +120,8 @@ fun NotificationsScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            // 2. HEADER
-            Spacer(modifier = Modifier.height(20.dp)) // Status bar
+
+            Spacer(modifier = Modifier.height(20.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 24.dp)
@@ -132,7 +132,7 @@ fun NotificationsScreen(navController: NavController) {
             }
 
             Text(
-                text = stringResource(R.string.notifications_title), // <--- TARJIMA
+                text = stringResource(R.string.notifications_title),
                 color = Color.White,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
@@ -140,7 +140,7 @@ fun NotificationsScreen(navController: NavController) {
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // 3. RO'YXAT
+
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 contentPadding = PaddingValues(bottom = 100.dp)
@@ -148,7 +148,7 @@ fun NotificationsScreen(navController: NavController) {
                 if (notifications.isEmpty()) {
                     item {
                         Text(
-                            text = stringResource(R.string.no_new_activity), // <--- TARJIMA
+                            text = stringResource(R.string.no_new_activity),
                             color = Color.Gray,
                             fontSize = 14.sp,
                             modifier = Modifier.padding(top = 20.dp)
@@ -188,7 +188,7 @@ fun NotificationItemNew(notif: Notification, onClick: () -> Unit) {
         else -> Pair(Icons.Rounded.Notifications, Color.Gray)
     }
 
-    // --- MATNLARNI TARJIMA QILISH ---
+
     val titleText = when (notif.type) {
         "INVEST" -> "@${notif.senderName} ${stringResource(R.string.notif_invested)}"
         "FOLLOW" -> "@${notif.senderName} ${stringResource(R.string.notif_followed)}"
@@ -201,7 +201,7 @@ fun NotificationItemNew(notif: Notification, onClick: () -> Unit) {
     val subText = when (notif.type) {
         "INVEST" -> stringResource(R.string.desc_invest)
         "FOLLOW" -> stringResource(R.string.desc_follow)
-        "VOTE_VALID" -> "${stringResource(R.string.desc_win)} +${notif.amount}" // Dinamik qism qo'shildi
+        "VOTE_VALID" -> "${stringResource(R.string.desc_win)} +${notif.amount}"
         "VOTE_FAKE" -> stringResource(R.string.desc_loss)
         "UNFOLLOW" -> stringResource(R.string.desc_unfollow)
         else -> stringResource(R.string.desc_default)
@@ -213,7 +213,7 @@ fun NotificationItemNew(notif: Notification, onClick: () -> Unit) {
             .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Yashil nuqta
+
         Box(
             modifier = Modifier
                 .size(8.dp)
@@ -227,7 +227,7 @@ fun NotificationItemNew(notif: Notification, onClick: () -> Unit) {
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // Ikonka Konteyneri
+
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -245,7 +245,7 @@ fun NotificationItemNew(notif: Notification, onClick: () -> Unit) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Matnlar
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = titleText,
@@ -265,7 +265,7 @@ fun NotificationItemNew(notif: Notification, onClick: () -> Unit) {
             )
         }
 
-        // Vaqt
+
         Text(
             text = timeAgo,
             color = Color.Gray,

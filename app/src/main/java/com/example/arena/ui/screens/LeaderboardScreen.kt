@@ -52,12 +52,12 @@ fun LeaderboardScreen(navController: NavController) {
     var leaders by remember { mutableStateOf<List<User>>(emptyList()) }
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
-    // TOP GLADIATORLARNI YUKLASH
+
     LaunchedEffect(Unit) {
         try {
             val snapshot = FirebaseFirestore.getInstance().collection("users")
-                .orderBy("marketValue", Query.Direction.DESCENDING) // Eng qimmati tepada
-                .limit(50) // Top 50 ta
+                .orderBy("marketValue", Query.Direction.DESCENDING)
+                .limit(50)
                 .get().await()
 
             leaders = snapshot.toObjects(User::class.java)
@@ -66,14 +66,14 @@ fun LeaderboardScreen(navController: NavController) {
         }
     }
 
-    // DIQQAT: Scaffold YO'Q! Faqat Column.
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(ArenaBlack)
             .padding(24.dp)
     ) {
-        // HEADER
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.EmojiEvents, contentDescription = null, tint = Color(0xFFFFD700))
             Spacer(modifier = Modifier.width(10.dp))
@@ -94,21 +94,21 @@ fun LeaderboardScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // RO'YXAT
+
         LazyColumn(
-            modifier = Modifier.weight(1f) // Qolgan joyni egallaydi
+            modifier = Modifier.weight(1f)
         ) {
             itemsIndexed(leaders) { index, user ->
                 LeaderItem(
                     user = user,
                     rank = index + 1,
                     isMe = user.uid == currentUserId,
-                    // BOSILGANDA PROFILGA O'TISH:
+
                     onClick = { navController.navigate(Screen.UserDetail.createRoute(user.uid)) }
                 )
             }
 
-            // Pastki menyu to'sib qo'ymasligi uchun bo'sh joy
+
             item {
                 Spacer(modifier = Modifier.height(80.dp))
             }
@@ -118,7 +118,7 @@ fun LeaderboardScreen(navController: NavController) {
 
 @Composable
 fun LeaderItem(user: User, rank: Int, isMe: Boolean, onClick: () -> Unit) {
-    // Ranglar: 1-Oltin, 2-Kumush, 3-Bronza, Qolganlar-Kulrang
+
     val rankColor = when (rank) {
         1 -> Color(0xFFFFD700)
         2 -> Color(0xFFC0C0C0)
@@ -134,7 +134,7 @@ fun LeaderItem(user: User, rank: Int, isMe: Boolean, onClick: () -> Unit) {
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .border(1.dp, borderColor, RoundedCornerShape(12.dp))
-            .clickable { onClick() }, // KLIK ESHITUVCHI
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
         Row(
@@ -143,7 +143,7 @@ fun LeaderItem(user: User, rank: Int, isMe: Boolean, onClick: () -> Unit) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // RANK RAQAMI
+
             Text(
                 text = "#$rank",
                 color = rankColor,
@@ -153,7 +153,7 @@ fun LeaderItem(user: User, rank: Int, isMe: Boolean, onClick: () -> Unit) {
                 modifier = Modifier.width(40.dp)
             )
 
-            // AVATAR
+
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -170,7 +170,7 @@ fun LeaderItem(user: User, rank: Int, isMe: Boolean, onClick: () -> Unit) {
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // ISM VA MARKET VALUE
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = if (isMe) "${user.username} (YOU)" else user.username,
@@ -186,7 +186,7 @@ fun LeaderItem(user: User, rank: Int, isMe: Boolean, onClick: () -> Unit) {
                 )
             }
 
-            // STATUS
+
             if (rank <= 3) {
                 Icon(
                     Icons.Default.EmojiEvents,

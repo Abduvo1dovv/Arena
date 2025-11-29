@@ -72,7 +72,7 @@ fun EditProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-    // Cloudinary Init
+
     LaunchedEffect(Unit) {
         try {
             MediaManager.init(context, mapOf("cloud_name" to "dl1vh3hen", "secure" to true))
@@ -81,22 +81,22 @@ fun EditProfileScreen(navController: NavController) {
     }
 
     var username by remember { mutableStateOf("") }
-    // Hozirgi rasm URL (Firebase dan kelgan)
+
     var currentAvatarUrl by remember { mutableStateOf("") }
-    // Yangi tanlangan rasm URI (Galereyadan)
+
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     var isLoading by remember { mutableStateOf(false) }
     var isSaving by remember { mutableStateOf(false) }
 
-    // Galereyani ochish
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         selectedImageUri = uri
     }
 
-    // User ma'lumotlarini yuklash
+
     LaunchedEffect(Unit) {
         if (uid != null) {
             isLoading = true
@@ -105,15 +105,15 @@ fun EditProfileScreen(navController: NavController) {
             val user = doc.toObject(User::class.java)
             if (user != null) {
                 username = user.username
-                // Avatar URLni qanday nom bilan saqlaganingizga qarab o'zgartiring.
-                // Agar User modelda avatarUrl bo'lmasa, vaqtincha DiceBear ishlatamiz.
-                // Lekin bu yerda biz rasm yuklashni qilyapmiz, shuning uchun User modelga `avatarUrl` qo'shish tavsiya etiladi.
-                // Hozircha man taxminiy `photoUrl` deb oldim, agar sizda yo'q bo'lsa User modelga qo'shing.
-                // Agar User model o'zgarmas bo'lsa, quyidagi qatorni o'zingizga moslang.
+
+
+
+
+
                 currentAvatarUrl =
                     "https://api.dicebear.com/9.x/notionists/png?seed=${user.uid}&backgroundColor=00ff41"
 
-                // Agar rostdan ham bazada rasm bo'lsa:
+
                 if (doc.contains("avatarUrl")) {
                     currentAvatarUrl = doc.getString("avatarUrl") ?: currentAvatarUrl
                 }
@@ -122,7 +122,7 @@ fun EditProfileScreen(navController: NavController) {
         }
     }
 
-    // Helper: URI dan File yasash
+
     fun uriToFile(context: Context, uri: Uri): File? {
         return try {
             val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
@@ -145,12 +145,12 @@ fun EditProfileScreen(navController: NavController) {
         val userRef = db.collection("users").document(uid)
 
         if (selectedImageUri != null) {
-            // 1. Rasmni faylga aylantirish
+
             val file = uriToFile(context, selectedImageUri!!)
             if (file != null) {
-                // 2. Cloudinaryga yuklash
+
                 MediaManager.get().upload(file.path)
-                    .unsigned("arena_upload") // Upload Preset nomi
+                    .unsigned("arena_upload")
                     .option("resource_type", "image")
                     .callback(object : UploadCallback {
                         override fun onStart(requestId: String?) {}
@@ -164,7 +164,7 @@ fun EditProfileScreen(navController: NavController) {
                         override fun onSuccess(requestId: String?, resultData: Map<*, *>?) {
                             val secureUrl = resultData?.get("secure_url") as? String
                             if (secureUrl != null) {
-                                // 3. Bazaga yozish (Rasm + Ism)
+
                                 userRef.update(
                                     mapOf(
                                         "username" to username,
@@ -189,7 +189,7 @@ fun EditProfileScreen(navController: NavController) {
                     .dispatch()
             }
         } else {
-            // Faqat ismni yangilash
+
             userRef.update("username", username)
                 .addOnSuccessListener {
                     isSaving = false
@@ -199,10 +199,12 @@ fun EditProfileScreen(navController: NavController) {
         }
     }
 
-    // UI
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(ArenaBlack)) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ArenaBlack)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -217,7 +219,7 @@ fun EditProfileScreen(navController: NavController) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // HEADER
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -239,14 +241,14 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // AVATAR
+
             Box(
                 contentAlignment = Alignment.BottomEnd,
                 modifier = Modifier
                     .size(120.dp)
                     .clickable { galleryLauncher.launch("image/*") }
             ) {
-                // Rasm ko'rsatish (Yangi tanlangan yoki eski)
+
                 AsyncImage(
                     model = selectedImageUri ?: currentAvatarUrl,
                     contentDescription = "Profile",
@@ -258,7 +260,7 @@ fun EditProfileScreen(navController: NavController) {
                     contentScale = ContentScale.Crop
                 )
 
-                // Kamera ikonka
+
                 Box(
                     modifier = Modifier
                         .size(36.dp)
@@ -280,7 +282,7 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // USERNAME INPUT
+
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
@@ -300,7 +302,7 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // SAVE BUTTON
+
             Button(
                 onClick = { saveProfile() },
                 modifier = Modifier

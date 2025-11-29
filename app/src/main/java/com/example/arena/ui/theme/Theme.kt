@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-// Qora Rejim Ranglari
+
 private val DarkColorScheme = darkColorScheme(
     primary = ArenaGreen,
     secondary = ArenaRed,
@@ -22,7 +22,7 @@ private val DarkColorScheme = darkColorScheme(
     onSurface = ArenaWhite,
 )
 
-// Oq Rejim Ranglari (Kelajak uchun)
+
 private val LightColorScheme = lightColorScheme(
     primary = LightGreen,
     secondary = ArenaRed,
@@ -45,11 +45,11 @@ fun ARENATheme(
         SideEffect {
             val window = (view.context as Activity).window
 
-            // Status Bar va Navigation Bar shaffof bo'ladi (Edge-to-Edge uchun)
-            window.statusBarColor = Color.Transparent.toArgb()
-            window.navigationBarColor = Color.Black.toArgb() // Yoki Transparent
 
-            // Ikonkalar rangi (Qora fonda oq ikonka, Oq fonda qora ikonka)
+            window.statusBarColor = Color.Transparent.toArgb()
+            window.navigationBarColor = Color.Black.toArgb()
+
+
             val insetsController = WindowCompat.getInsetsController(window, view)
             insetsController.isAppearanceLightStatusBars = !darkTheme
             insetsController.isAppearanceLightNavigationBars = !darkTheme

@@ -73,7 +73,7 @@ fun InboxScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(true) }
     var searchQuery by remember { mutableStateOf("") }
 
-    // JONLI KUZATUV
+
     DisposableEffect(Unit) {
         val db = FirebaseFirestore.getInstance()
         if (currentUserId == null) return@DisposableEffect onDispose { }
@@ -120,7 +120,7 @@ fun InboxScreen(navController: NavController) {
             .fillMaxSize()
             .background(ArenaBlack)
     ) {
-        // 1. ORQA FON (Rasmdagi yashil gradient)
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -128,15 +128,15 @@ fun InboxScreen(navController: NavController) {
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color(0xFF004400), // To'q yashil (Tepada)
-                            ArenaBlack         // Qora (Pastda)
+                            Color(0xFF004400),
+                            ArenaBlack
                         )
                     )
                 )
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
-            // 2. HEADER (Inbox yozuvi va Edit icon)
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -145,24 +145,24 @@ fun InboxScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Spacer(modifier = Modifier.size(24.dp)) // O'rtaga olish uchun
+                Spacer(modifier = Modifier.size(24.dp))
                 Text(
-                    text = stringResource(R.string.inbox_title), // <--- R.string.inbox_title
+                    text = stringResource(R.string.inbox_title),
                     color = Color.White,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Icon(
-                    imageVector = Icons.Default.Edit, // Qalam belgisi
+                    imageVector = Icons.Default.Edit,
                     contentDescription = "New Message",
                     tint = Color.White,
                     modifier = Modifier
                         .size(24.dp)
-                        .clickable { navController.navigate(Screen.Search.route) } // Yangi xabar yozish uchun Searchga o'tadi
+                        .clickable { navController.navigate(Screen.Search.route) }
                 )
             }
 
-            // 3. SEARCH BAR (Rasmdagi kabi)
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -192,7 +192,7 @@ fun InboxScreen(navController: NavController) {
                                     stringResource(R.string.search),
                                     color = Color.Gray,
                                     fontSize = 16.sp
-                                ) // <--- R.string.search
+                                )
                             }
                             innerTextField()
                         },
@@ -203,7 +203,7 @@ fun InboxScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 4. LIST
+
             if (isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = ArenaGreen)
@@ -213,7 +213,7 @@ fun InboxScreen(navController: NavController) {
                     Text(
                         stringResource(R.string.no_messages),
                         color = Color.Gray
-                    ) // <--- R.string.no_messages
+                    )
                 }
             } else {
                 LazyColumn(
@@ -240,10 +240,10 @@ fun InboxScreen(navController: NavController) {
 @Composable
 fun InboxItem(item: ChatItemData, myId: String, onClick: () -> Unit) {
     val time = if (item.chatRoom.lastMessageTime > 0) {
-        // Vaqt formati
+
         val diff = System.currentTimeMillis() - item.chatRoom.lastMessageTime
         when {
-            diff < 60000 -> stringResource(R.string.just_now) // <--- R.string.just_now
+            diff < 60000 -> stringResource(R.string.just_now)
             diff < 3600000 -> "${diff / 60000}m"
             diff < 86400000 -> "${diff / 3600000}h"
             else -> "${diff / 86400000}d"
@@ -263,7 +263,7 @@ fun InboxItem(item: ChatItemData, myId: String, onClick: () -> Unit) {
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Avatar
+
         val avatarUrl =
             "https://api.dicebear.com/9.x/notionists/png?seed=${item.otherUser?.uid ?: "x"}&backgroundColor=00ff41"
         AsyncImage(
@@ -278,7 +278,7 @@ fun InboxItem(item: ChatItemData, myId: String, onClick: () -> Unit) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Text Content
+
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -309,7 +309,7 @@ fun InboxItem(item: ChatItemData, myId: String, onClick: () -> Unit) {
             )
         }
 
-        // Unread Indicator (Yashil nuqta)
+
         if (isUnread) {
             Spacer(modifier = Modifier.width(8.dp))
             Box(

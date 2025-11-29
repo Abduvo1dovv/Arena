@@ -99,7 +99,7 @@ fun FeedScreen(navController: NavController) {
         }
     }
 
-    // Feed Listener
+
     LaunchedEffect(Unit) {
         val db = FirebaseFirestore.getInstance()
         feedListener = db.collection("challenges")
@@ -198,9 +198,11 @@ fun FeedScreen(navController: NavController) {
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(ArenaBlack)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ArenaBlack)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -208,9 +210,11 @@ fun FeedScreen(navController: NavController) {
                 .background(Brush.verticalGradient(colors = listOf(Color(0xFF003300), ArenaBlack)))
         )
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -220,16 +224,16 @@ fun FeedScreen(navController: NavController) {
                 Icon(Icons.Default.Gavel, contentDescription = null, tint = ArenaGreen)
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
-                    // HEADER TEXT (TARJIMA)
+
                     Text(
-                        text = stringResource(R.string.the_tribunal), // <--- R.string.the_tribunal
+                        text = stringResource(R.string.the_tribunal),
                         color = Color.White,
                         fontSize = 24.sp,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = stringResource(R.string.judge_earn_repeat), // <--- R.string.judge_earn_repeat
+                        text = stringResource(R.string.judge_earn_repeat),
                         color = Color.Gray,
                         fontSize = 12.sp,
                         fontFamily = FontFamily.Monospace
@@ -244,7 +248,7 @@ fun FeedScreen(navController: NavController) {
             } else if (feedItems.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        text = stringResource(R.string.no_cases), // <--- R.string.no_cases
+                        text = stringResource(R.string.no_cases),
                         color = Color.Gray,
                         fontFamily = FontFamily.Monospace
                     )
@@ -322,7 +326,7 @@ fun FeedCard(
                         color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp
                     )
                     Text(
-                        text = "submitted proof", // Buni ham string resursga qo'shish mumkin
+                        text = "submitted proof",
                         color = Color.Gray, fontSize = 12.sp
                     )
                 }
@@ -411,7 +415,7 @@ fun FeedCard(
             }
             Spacer(modifier = Modifier.height(20.dp))
 
-            // STATUS & BUTTONS
+
             if (isMe) {
                 when (challenge.status) {
                     "COMPLETED" -> {
@@ -483,7 +487,7 @@ fun FeedCard(
                                 stringResource(R.string.fake),
                                 color = ArenaRed,
                                 fontWeight = FontWeight.Bold
-                            ) // <--- R.string.fake
+                            )
                         }
                         Button(
                             onClick = { onVote(true) },
@@ -498,7 +502,7 @@ fun FeedCard(
                                 stringResource(R.string.valid),
                                 color = ArenaGreen,
                                 fontWeight = FontWeight.Bold
-                            ) // <--- R.string.valid
+                            )
                         }
                     }
                 } else {
@@ -540,18 +544,22 @@ fun FullScreenVideoPlayer(videoUrl: String, onDismiss: () -> Unit) {
             decorFitsSystemWindows = false
         )
     ) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)) {
-            AndroidView(factory = { ctx ->
-                PlayerView(ctx).apply {
-                    player = exoPlayer; useController = false; resizeMode =
-                    AspectRatioFrameLayout.RESIZE_MODE_FIT; layoutParams =
-                    FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-                }
-            }, modifier = Modifier
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
-                .align(Alignment.Center))
+                .background(Color.Black)
+        ) {
+            AndroidView(
+                factory = { ctx ->
+                    PlayerView(ctx).apply {
+                        player = exoPlayer; useController = false; resizeMode =
+                        AspectRatioFrameLayout.RESIZE_MODE_FIT; layoutParams =
+                        FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+                    }
+                }, modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center)
+            )
             Box(
                 modifier = Modifier
                     .fillMaxSize()

@@ -78,17 +78,16 @@ fun UserListScreen(navController: NavController, userId: String, listType: Strin
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     val isMyProfile = currentUserId == userId
 
-    // TITLE TARJIMASI
+
     val title =
         if (listType == "followers") stringResource(R.string.followers_title) else stringResource(R.string.following_title)
 
-    // Stringlar (Toast uchun)
-    val unfollowedMsg =
-        stringResource(R.string.unfollow) + "ed" // Oddiy yechim (yoki alohida string qo'shish kerak)
-    val removedMsg = "User removed" // Buni ham qo'shish mumkin
-    val followingMsg = stringResource(R.string.btn_following)
 
-    // LOGIKA
+    stringResource(R.string.unfollow) + "ed"
+    "User removed"
+    stringResource(R.string.btn_following)
+
+
     fun handleAction(item: UserListItem) {
         val db = FirebaseFirestore.getInstance()
         val batch = db.batch()
@@ -209,10 +208,12 @@ fun UserListScreen(navController: NavController, userId: String, listType: Strin
         }
     }
 
-    // UI
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(ArenaBlack)) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ArenaBlack)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -220,9 +221,11 @@ fun UserListScreen(navController: NavController, userId: String, listType: Strin
                 .background(Brush.verticalGradient(colors = listOf(Color(0xFF003300), ArenaBlack)))
         )
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -252,7 +255,7 @@ fun UserListScreen(navController: NavController, userId: String, listType: Strin
                         stringResource(R.string.list_empty),
                         color = Color.Gray,
                         fontFamily = FontFamily.Monospace
-                    ) // <--- TARJIMA
+                    )
                 }
             } else {
                 LazyColumn {
@@ -334,21 +337,24 @@ fun UserItemRowNew(
             }
 
             if (showButton) {
-                // TUGMA MATNI VA RANGI (TARJIMA QILINGAN)
+
                 val (btnText, btnColor) = when {
                     isMyProfileList && listType == "followers" -> Pair(
                         stringResource(R.string.remove),
                         ArenaRed
-                    ) // <--- TARJIMA
+                    )
+
                     isMyProfileList && listType == "following" -> Pair(
                         stringResource(R.string.unfollow),
                         Color.Gray
-                    ) // <--- TARJIMA
+                    )
+
                     item.isFollowing -> Pair(
                         stringResource(R.string.btn_following),
                         Color.Gray
-                    ) // <--- TARJIMA
-                    else -> Pair(stringResource(R.string.follow), ArenaGreen) // <--- TARJIMA
+                    )
+
+                    else -> Pair(stringResource(R.string.follow), ArenaGreen)
                 }
 
                 val containerColor = if (btnColor == ArenaGreen) ArenaGreen else Color.Transparent

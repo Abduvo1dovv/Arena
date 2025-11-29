@@ -56,7 +56,7 @@ fun SettingsScreen(navController: NavController) {
     val context = LocalContext.current
     var showLanguageDialog by remember { mutableStateOf(false) }
 
-    // Hozirgi tilni bilib olamiz
+
     val currentLang = LocaleHelper.getCurrentLanguage(context)
 
     Scaffold(
@@ -64,7 +64,7 @@ fun SettingsScreen(navController: NavController) {
         topBar = {
             TopAppBar(
                 title = {
-                    // String resursdan o'qish
+
                     Text(
                         stringResource(R.string.settings_title),
                         color = Color.White,
@@ -84,22 +84,24 @@ fun SettingsScreen(navController: NavController) {
             )
         }
     ) { padding ->
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             item {
                 SettingsSectionTitle("Account")
 
                 SettingsItem(
                     icon = Icons.Outlined.Person,
-                    title = stringResource(R.string.edit_profile), // Resursdan o'qish
+                    title = stringResource(R.string.edit_profile),
                     onClick = { /* Edit Profile */ }
                 )
 
                 SettingsItem(
                     icon = Icons.Outlined.Language,
                     title = stringResource(R.string.language),
-                    subtitle = currentLang, // Hozirgi til
+                    subtitle = currentLang,
                     onClick = { showLanguageDialog = true }
                 )
             }
@@ -121,7 +123,7 @@ fun SettingsScreen(navController: NavController) {
         }
     }
 
-    // TILLAR DIALOGI
+
     if (showLanguageDialog) {
         AlertDialog(
             onDismissRequest = { showLanguageDialog = false },
@@ -153,7 +155,7 @@ fun SettingsScreen(navController: NavController) {
     }
 }
 
-// Yordamchi komponentlar o'zgarishsiz qoladi...
+
 @Composable
 fun SettingsSectionTitle(text: String) {
     Text(

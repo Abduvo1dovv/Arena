@@ -41,12 +41,12 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         com.example.arena.utils.LocaleHelper.loadLocale(this)
-        enableEdgeToEdge() // To'liq ekran
+        enableEdgeToEdge()
         setContent {
             ARENATheme {
                 val navController = rememberNavController()
 
-                // Qaysi ekranlarda menyu ko'rinishi kerak?
+
                 val navBackStackEntry = navController.currentBackStackEntryAsState().value
                 val currentRoute = navBackStackEntry?.destination?.route
 
@@ -55,13 +55,13 @@ class MainActivity : FragmentActivity() {
                     Screen.Search.route,
                     Screen.Leaderboard.route,
                     Screen.Profile.route,
-                    Screen.Feed.route, // Feed ham qo'shildi
-                    // CreateChallengeScreen da menyu ko'rsatmaslik ma'qul (Instagramda ham shunday)
-                )
+                    Screen.Feed.route,
+
+                    )
 
                 Scaffold(
                     containerColor = ArenaBlack,
-                    // Klaviatura chiqsa, menyu ko'tarilishi uchun:
+
                     contentWindowInsets = WindowInsets.ime,
                     bottomBar = {
                         if (showBottomBar) {
@@ -78,21 +78,25 @@ class MainActivity : FragmentActivity() {
                         composable(Screen.Login.route) { LoginScreen(navController) }
                         composable(Screen.Signup.route) { SignUpScreen(navController) }
 
-                        // MAIN TABS
+
                         composable(Screen.Home.route) { HomeScreen(navController) }
                         composable(Screen.Search.route) { SearchScreen(navController) }
-                        composable(Screen.Feed.route) { FeedScreen(navController) } // Tribunal
+                        composable(Screen.Feed.route) { FeedScreen(navController) }
                         composable(Screen.Profile.route) { ProfileScreen(navController) }
 
-                        // CREATE (Menyusiz ochiladi, to'liq ekran)
-                        composable(Screen.CreateChallenge.route) { CreateChallengeScreen(navController) }
 
-                        // SUB SCREENS
+                        composable(Screen.CreateChallenge.route) {
+                            CreateChallengeScreen(
+                                navController
+                            )
+                        }
+
+
                         composable(Screen.Leaderboard.route) { LeaderboardScreen(navController) }
                         composable(Screen.Notifications.route) { NotificationsScreen(navController) }
                         composable(Screen.Inbox.route) { InboxScreen(navController) }
 
-                        // DYNAMIC ROUTES
+
                         composable(
                             route = Screen.UserDetail.route,
                             arguments = listOf(navArgument("userId") { type = NavType.StringType })
@@ -103,13 +107,16 @@ class MainActivity : FragmentActivity() {
 
                         composable(
                             route = Screen.ProofCamera.route,
-                            arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
+                            arguments = listOf(navArgument("challengeId") {
+                                type = NavType.StringType
+                            })
                         ) { backStackEntry ->
-                            val challengeId = backStackEntry.arguments?.getString("challengeId") ?: ""
+                            val challengeId =
+                                backStackEntry.arguments?.getString("challengeId") ?: ""
                             ProofCameraScreen(
                                 navController = navController,
                                 challengeId = challengeId,
-                                onPhotoCaptured = {} // ProofCamera ichida hal qilinadi
+                                onPhotoCaptured = {}
                             )
                         }
 
@@ -131,7 +138,7 @@ class MainActivity : FragmentActivity() {
                         ) { backStackEntry ->
                             val userId = backStackEntry.arguments?.getString("userId") ?: ""
                             if (userId.isNotEmpty()) {
-                                // TUZATILDI: Faqat navController va userId beriladi
+
                                 ChatScreen(navController = navController, targetUserId = userId)
                             }
                         }

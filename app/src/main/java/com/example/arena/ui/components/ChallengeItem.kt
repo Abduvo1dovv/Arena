@@ -39,7 +39,7 @@ import com.example.arena.ui.theme.ArenaGreen
 fun ChallengeItem(
     challenge: Challenge,
     onComplete: () -> Unit,
-    isReadOnly: Boolean = false // <--- MANA SHU QATOR YETISHMAYOTGAN EDI
+    isReadOnly: Boolean = false
 ) {
     val timeLeft = "${challenge.durationHours}H LEFT"
 
@@ -54,7 +54,7 @@ fun ChallengeItem(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Tepa qism
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -88,7 +88,7 @@ fun ChallengeItem(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Sarlavha
+
             Text(
                 text = challenge.title.uppercase(),
                 color = Color.White,
@@ -99,7 +99,7 @@ fun ChallengeItem(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Pastki qism
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -128,8 +128,8 @@ fun ChallengeItem(
                     }
                 }
 
-                // --- MUHIM QISM ---
-                // Agar ReadOnly bo'lsa, tugma yo'qoladi
+
+
                 if (!isReadOnly) {
                     Button(
                         onClick = onComplete,
@@ -153,7 +153,7 @@ fun ChallengeItem(
                         )
                     }
                 } else {
-                    // Tugma o'rniga shunchaki status
+
                     Text(
                         text = "IN PROGRESS",
                         color = Color.Gray,

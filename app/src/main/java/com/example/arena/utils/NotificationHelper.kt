@@ -9,7 +9,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.arena.MainActivity
-import com.example.arena.R // Ilovangiz R klassi
+import com.example.arena.R
 
 object NotificationHelper {
     private const val CHANNEL_ID = "arena_deadline_channel"
@@ -20,18 +20,19 @@ object NotificationHelper {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH // Ovozli va ekranga chiqadigan
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Reminders for hardcore challenges"
                 enableVibration(true)
             }
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val manager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
     }
 
     fun showNotification(context: Context, title: String, message: String) {
-        // Bildirishnoma bosilganda ilovani ochish
+
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -40,13 +41,13 @@ object NotificationHelper {
         )
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher) // O'zingizdagi ikonka
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setVibrate(longArrayOf(0, 500, 200, 500)) // Agressiv vibratsiya
+            .setVibrate(longArrayOf(0, 500, 200, 500))
 
         try {
             val manager = NotificationManagerCompat.from(context)

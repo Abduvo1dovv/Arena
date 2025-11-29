@@ -36,19 +36,19 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController) {
 
-    // Shaffoflik (0 dan 1 ga o'zgaradi)
+
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
-        // 1. Asta-sekin paydo bo'lish (1.5 soniya)
+
         alpha.animateTo(
             targetValue = 1f, animationSpec = tween(durationMillis = 2500)
         )
 
-        // 2. Ekranda ozgina ushlab turish (0.5 soniya)
+
         delay(500)
 
-        // 3. Userni tekshirish va yo'naltirish
+
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             navController.navigate(Screen.Home.route) {
@@ -65,15 +65,15 @@ fun SplashScreen(navController: NavController) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(ArenaBlack) // Qora fon
+            .background(ArenaBlack)
     ) {
-        // Hamma elementlar bitta Column ichida va alpha orqali paydo bo'ladi
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.alpha(alpha.value) // Animatsiya shu yerda
+            modifier = Modifier.alpha(alpha.value)
         ) {
-            // Default App Icon
+
             Image(
                 painter = painterResource(id = R.drawable.logo_logo),
                 contentDescription = "App Logo",
@@ -82,18 +82,18 @@ fun SplashScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // ARENA yozuvi
+
             Text(
                 text = "ARENA",
                 color = ArenaGreen,
                 fontFamily = FontFamily.Monospace,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 4.sp // Harflar orasini ochish
+                letterSpacing = 4.sp
             )
         }
 
-        // Pastki versiya (Doim ko'rinib turadi yoki buni ham alpha ga qo'shsa bo'ladi)
+
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

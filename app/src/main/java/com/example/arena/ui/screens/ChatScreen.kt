@@ -97,7 +97,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
-    // DIALOG STATES
+
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showClearHistoryDialog by remember { mutableStateOf(false) }
 
@@ -105,7 +105,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
     var deleteForEveryone by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
 
-    // INIT
+
     LaunchedEffect(targetUserId) {
         val db = FirebaseFirestore.getInstance()
         try {
@@ -186,7 +186,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
         showMenu = false
     }
 
-    // --- UI ---
+
     Scaffold(
         containerColor = ArenaBlack,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -247,7 +247,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                                     stringResource(R.string.online),
                                     color = Color.Gray,
                                     fontSize = 12.sp
-                                ) // <--- TARJIMA
+                                )
                             }
                         }
                     }
@@ -276,7 +276,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                                         stringResource(R.string.block_user),
                                         color = ArenaRed
                                     )
-                                }, // <--- TARJIMA
+                                },
                                 onClick = {
                                     showMenu = false; Toast.makeText(
                                     context,
@@ -291,7 +291,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                                         stringResource(R.string.clear_history),
                                         color = Color.White
                                     )
-                                }, // <--- TARJIMA
+                                },
                                 onClick = { showClearHistoryDialog = true }
                             )
                         }
@@ -322,7 +322,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                             color = Color.Gray,
                             fontSize = 14.sp
                         )
-                    }, // <--- TARJIMA
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .heightIn(min = 50.dp, max = 100.dp)
@@ -354,9 +354,11 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
             }
         }
     ) { padding ->
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -372,7 +374,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                             color = Color.Gray,
                             fontSize = 12.sp,
                             modifier = Modifier.padding(vertical = 8.dp)
-                        ) // <--- TARJIMA
+                        )
                     }
                 }
                 items(messages) { message ->
@@ -388,7 +390,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
         }
     }
 
-    // DELETE DIALOG
+
     if (showDeleteDialog && messageToDelete != null) {
         val isMyMessage = messageToDelete?.senderId == currentUserId
         AlertDialog(
@@ -400,14 +402,14 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
-            }, // <--- TARJIMA
+            },
             text = {
                 Column {
                     Text(
                         stringResource(R.string.delete_confirm),
                         color = Color.Gray,
                         fontSize = 14.sp
-                    ) // <--- TARJIMA
+                    )
                     if (isMyMessage) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Row(
@@ -428,7 +430,7 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                                 "${stringResource(R.string.also_delete_for)} ${targetUser?.username ?: "User"}",
                                 color = Color.White,
                                 fontSize = 14.sp
-                            ) // <--- TARJIMA
+                            )
                         }
                     }
                 }
@@ -442,18 +444,18 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                         stringResource(R.string.delete),
                         color = Color.White,
                         fontWeight = FontWeight.Bold
-                    ) // <--- TARJIMA
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
-                }) { Text(stringResource(R.string.cancel), color = Color.White) } // <--- TARJIMA
+                }) { Text(stringResource(R.string.cancel), color = Color.White) }
             }
         )
     }
 
-    // CLEAR HISTORY DIALOG
+
     if (showClearHistoryDialog) {
         AlertDialog(
             onDismissRequest = { showClearHistoryDialog = false },
@@ -464,14 +466,14 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                     color = ArenaRed,
                     fontWeight = FontWeight.Bold
                 )
-            }, // <--- TARJIMA
+            },
             text = {
                 Text(
                     stringResource(R.string.clear_history_confirm),
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
-            }, // <--- TARJIMA
+            },
             confirmButton = {
                 Button(
                     onClick = { clearChatHistory() },
@@ -481,13 +483,13 @@ fun ChatScreen(navController: NavController, targetUserId: String) {
                         stringResource(R.string.clear_all),
                         color = Color.White,
                         fontWeight = FontWeight.Bold
-                    ) // <--- TARJIMA
+                    )
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showClearHistoryDialog = false
-                }) { Text(stringResource(R.string.cancel), color = Color.White) } // <--- TARJIMA
+                }) { Text(stringResource(R.string.cancel), color = Color.White) }
             }
         )
     }
