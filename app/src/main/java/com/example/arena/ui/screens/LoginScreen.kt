@@ -1,40 +1,53 @@
 package com.example.arena.ui.screens
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.arena.R // Google ikonka uchun (agar bo'lmasa qo'lda chizamiz)
 import com.example.arena.Screen
 import com.example.arena.model.User
 import com.example.arena.ui.theme.ArenaBlack
@@ -65,29 +78,51 @@ fun LoginScreen(navController: NavController) {
                 if (document.exists()) {
                     navController.navigate(Screen.Home.route) { popUpTo(0) }
                 } else {
-                    val newUser = User(uid = user.uid, username = user.displayName ?: "User", email = user.email ?: "", marketValue = 0.0, coins = 50, status = "ROOKIE")
-                    userRef.set(newUser).addOnSuccessListener { navController.navigate(Screen.Home.route) { popUpTo(0) } }
+                    val newUser = User(
+                        uid = user.uid,
+                        username = user.displayName ?: "User",
+                        email = user.email ?: "",
+                        marketValue = 0.0,
+                        coins = 50,
+                        status = "ROOKIE"
+                    )
+                    userRef.set(newUser).addOnSuccessListener {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(0)
+                        }
+                    }
                 }
             }
         }
     }
 
-    val googleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            isLoading = true
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.result
-                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener { if (it.isSuccessful) checkAndCreateUserInDb() else { isLoading = false; errorMessage = "Google Login Failed" } }
-            } catch (e: Exception) { isLoading = false; errorMessage = "Error: ${e.message}" }
+    val googleLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                isLoading = true
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.result
+                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) checkAndCreateUserInDb() else {
+                                isLoading = false; errorMessage = "Google Login Failed"
+                            }
+                        }
+                } catch (e: Exception) {
+                    isLoading = false; errorMessage = "Error: ${e.message}"
+                }
+            }
         }
-    }
 
     fun startGoogleSignIn() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken("1026629804794-04bh3f9lmcpb0m3779li4aesv06t1rhf.apps.googleusercontent.com").requestEmail().build()
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("1026629804794-04bh3f9lmcpb0m3779li4aesv06t1rhf.apps.googleusercontent.com")
+            .requestEmail().build()
         val googleClient = GoogleSignIn.getClient(context, gso)
-        googleClient.signOut().addOnCompleteListener { googleLauncher.launch(googleClient.signInIntent) }
+        googleClient.signOut()
+            .addOnCompleteListener { googleLauncher.launch(googleClient.signInIntent) }
     }
 
     // --- UI DESIGN (Rasmdagidek) ---
@@ -101,7 +136,14 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(250.dp)
-                .background(Brush.verticalGradient(colors = listOf(Color(0xFF004400), Color.Transparent)))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF004400),
+                            Color.Transparent
+                        )
+                    )
+                )
                 .align(Alignment.TopCenter)
         )
 
@@ -126,7 +168,12 @@ fun LoginScreen(navController: NavController) {
 
             // Email Input
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text("EMAIL / USERNAME", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "EMAIL / USERNAME",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = email,
@@ -153,7 +200,12 @@ fun LoginScreen(navController: NavController) {
 
             // Password Input
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text("PASSWORD", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "PASSWORD",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = password,
@@ -193,7 +245,11 @@ fun LoginScreen(navController: NavController) {
                     if (email.isNotEmpty() && password.isNotEmpty()) {
                         isLoading = true
                         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener { if (it.isSuccessful) checkAndCreateUserInDb() else { isLoading = false; errorMessage = "Login Failed" } }
+                            .addOnCompleteListener {
+                                if (it.isSuccessful) checkAndCreateUserInDb() else {
+                                    isLoading = false; errorMessage = "Login Failed"
+                                }
+                            }
                     }
                 },
                 modifier = Modifier
@@ -205,13 +261,22 @@ fun LoginScreen(navController: NavController) {
                 if (isLoading) {
                     CircularProgressIndicator(color = Color.Black, modifier = Modifier.size(24.dp))
                 } else {
-                    Text("LOGIN", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(
+                        "LOGIN",
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text("Forgot Password?", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.clickable { /* TODO */ })
+            Text(
+                "Forgot Password?",
+                color = Color.Gray,
+                fontSize = 12.sp,
+                modifier = Modifier.clickable { /* TODO */ })
 
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -226,14 +291,24 @@ fun LoginScreen(navController: NavController) {
             ) {
                 // Oddiy Google yozuvi (Rasmdagidek)
                 // Agar sizda google icon bo'lsa Image() ishlating
-                Text("Continue with Google", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(
+                    "Continue with Google",
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
             }
 
             Spacer(modifier = Modifier.height(40.dp))
 
             Row {
                 Text("Don't have an account? ", color = Color.Gray, fontSize = 12.sp)
-                Text("Sign Up", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp, modifier = Modifier.clickable { navController.navigate(Screen.Signup.route) })
+                Text(
+                    "Sign Up",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    modifier = Modifier.clickable { navController.navigate(Screen.Signup.route) })
             }
         }
     }

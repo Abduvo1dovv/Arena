@@ -2,7 +2,6 @@ package com.example.arena.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import androidx.core.content.edit
 import java.util.Locale

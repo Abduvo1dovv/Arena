@@ -6,10 +6,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.rounded.AddBox // Instagramga o'xshash plyus
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.AddBox
 import androidx.compose.material.icons.rounded.Gavel
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -33,7 +38,11 @@ fun ArenaBottomBar(navController: NavController) {
         tonalElevation = 0.dp,
         modifier = Modifier
             .height(60.dp)
-            .border(0.5.dp, Color(0xFF222222), RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)) // Tepada ingichka chiziq
+            .border(
+                0.5.dp,
+                Color(0xFF222222),
+                RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp)
+            ) // Tepada ingichka chiziq
     ) {
         // 1. HOME
         ArenaNavItem(

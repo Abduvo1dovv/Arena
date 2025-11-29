@@ -95,4 +95,11 @@
     <string name="list_empty">ПУСТО</string>
     <string name="remove">УДАЛИТЬ</string>
     <string name="btn_following">ВЫ ПОДПИСАНЫ</string>
+
+    <string name="change_photo">Изменить фото</string>
+    <string name="username">Имя пользователя</string>
+    <string name="save_changes">СОХРАНИТЬ</string>
+    <string name="saving">СОХРАНЕНИЕ...</string>
+    <string name="profile_updated">Профиль обновлен!</string>
+    <string name="upload_error">Ошибка загрузки</string>
 </resources>

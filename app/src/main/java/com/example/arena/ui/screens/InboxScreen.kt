@@ -2,7 +2,19 @@ package com.example.arena.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -11,8 +23,16 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,7 +40,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource // <-- IMPORT
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.arena.R // <-- IMPORT
+import com.example.arena.R
 import com.example.arena.Screen
 import com.example.arena.model.ChatRoom
 import com.example.arena.model.User
@@ -38,8 +58,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.text.SimpleDateFormat
-import java.util.*
 
 data class ChatItemData(
     val chatRoom: ChatRoom,
@@ -78,7 +96,8 @@ fun InboxScreen(navController: NavController) {
                             val otherUserId = room.participants.find { it != currentUserId }
                             if (otherUserId != null) {
                                 try {
-                                    val userDoc = db.collection("users").document(otherUserId).get().await()
+                                    val userDoc =
+                                        db.collection("users").document(otherUserId).get().await()
                                     val otherUser = userDoc.toObject(User::class.java)
                                     fullList.add(ChatItemData(room, otherUser))
                                 } catch (ex: Exception) {
@@ -169,7 +188,11 @@ fun InboxScreen(navController: NavController) {
                         cursorBrush = SolidColor(ArenaGreen),
                         decorationBox = { innerTextField ->
                             if (searchQuery.isEmpty()) {
-                                Text(stringResource(R.string.search), color = Color.Gray, fontSize = 16.sp) // <--- R.string.search
+                                Text(
+                                    stringResource(R.string.search),
+                                    color = Color.Gray,
+                                    fontSize = 16.sp
+                                ) // <--- R.string.search
                             }
                             innerTextField()
                         },
@@ -187,7 +210,10 @@ fun InboxScreen(navController: NavController) {
                 }
             } else if (chatList.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.no_messages), color = Color.Gray) // <--- R.string.no_messages
+                    Text(
+                        stringResource(R.string.no_messages),
+                        color = Color.Gray
+                    ) // <--- R.string.no_messages
                 }
             } else {
                 LazyColumn(
@@ -238,7 +264,8 @@ fun InboxItem(item: ChatItemData, myId: String, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Avatar
-        val avatarUrl = "https://api.dicebear.com/9.x/notionists/png?seed=${item.otherUser?.uid ?: "x"}&backgroundColor=00ff41"
+        val avatarUrl =
+            "https://api.dicebear.com/9.x/notionists/png?seed=${item.otherUser?.uid ?: "x"}&backgroundColor=00ff41"
         AsyncImage(
             model = avatarUrl,
             contentDescription = null,

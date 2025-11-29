@@ -92,4 +92,11 @@
     <string name="list_empty">EMPTY LIST</string>
     <string name="remove">REMOVE</string>
     <string name="btn_following">FOLLOWING</string>
+
+    <string name="change_photo">Change Photo</string>
+    <string name="username">Username</string>
+    <string name="save_changes">SAVE CHANGES</string>
+    <string name="saving">SAVING...</string>
+    <string name="profile_updated">Profile Updated!</string>
+    <string name="upload_error">Upload Error</string> bu rus va ozbekchasini ham yozib ber
 </resources>

@@ -6,39 +6,57 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.rounded.AccountBalanceWallet
-import androidx.compose.material.icons.rounded.Groups
-import androidx.compose.material.icons.rounded.PersonAdd
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource // <-- MUHIM
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.arena.R // <-- MUHIM
+import com.example.arena.R
 import com.example.arena.Screen
 import com.example.arena.model.Challenge
 import com.example.arena.model.User
@@ -47,7 +65,6 @@ import com.example.arena.ui.theme.ArenaGreen
 import com.example.arena.ui.theme.ArenaRed
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -65,25 +82,33 @@ fun ProfileScreen(navController: NavController) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var challengeToDelete by remember { mutableStateOf<Challenge?>(null) }
 
-    // DATA LOADING
+    // DATA LOADING (REAL-TIME)
     LaunchedEffect(Unit) {
         if (currentUserId != null) {
-            try {
-                val db = FirebaseFirestore.getInstance()
-                val doc = db.collection("users").document(currentUserId).get().await()
-                user = doc.toObject(User::class.java)
-                followersCount = user?.followersCount ?: 0
-                followingCount = user?.followingCount ?: 0
+            val db = FirebaseFirestore.getInstance()
 
-                val historySnapshot = db.collection("challenges")
-                    .whereEqualTo("userId", currentUserId)
-                    .get()
-                    .await()
-                myHistory = historySnapshot.toObjects(Challenge::class.java).sortedByDescending { it.startTime }
-                isLoading = false
-            } catch (e: Exception) {
-                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            // 1. USER INFO LISTENER (JONLI)
+            db.collection("users").document(currentUserId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) return@addSnapshotListener
+                    if (snapshot != null && snapshot.exists()) {
+                        val u = snapshot.toObject(User::class.java)
+                        user = u
+                        followersCount = u?.followersCount ?: 0
+                        followingCount = u?.followingCount ?: 0
+                    }
+                }
+
+            // 2. HISTORY LISTENER (JONLI)
+            db.collection("challenges")
+                .whereEqualTo("userId", currentUserId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) return@addSnapshotListener
+                    if (snapshot != null) {
+                        myHistory = snapshot.toObjects(Challenge::class.java).sortedByDescending { it.startTime }
+                    }
+                    isLoading = false
+                }
         }
     }
 
@@ -100,8 +125,6 @@ fun ProfileScreen(navController: NavController) {
         db.collection("challenges").document(challenge.id)
             .delete()
             .addOnSuccessListener {
-                // Ro'yxatdan lokal o'chirish
-                myHistory = myHistory.filter { it.id != challenge.id }
                 Toast.makeText(context, "Record Deleted", Toast.LENGTH_SHORT).show()
                 showDeleteDialog = false
                 challengeToDelete = null
@@ -150,7 +173,14 @@ fun ProfileScreen(navController: NavController) {
                     // 1. AVATAR & INFO
                     item(span = { GridItemSpan(2) }) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            val avatarUrl = "https://api.dicebear.com/9.x/notionists/png?seed=${user!!.uid}&backgroundColor=00ff41"
+
+                            // --- AVATAR MANTIGI (O'ZGARTIRILDI) ---
+                            val avatarUrl = if (user!!.avatarUrl.isNotEmpty()) {
+                                user!!.avatarUrl // Agar yuklangan rasm bo'lsa
+                            } else {
+                                "https://api.dicebear.com/9.x/notionists/png?seed=${user!!.uid}&backgroundColor=00ff41" // Bo'lmasa default
+                            }
+
                             Box(
                                 modifier = Modifier
                                     .size(110.dp)
@@ -159,10 +189,13 @@ fun ProfileScreen(navController: NavController) {
                                     .border(2.dp, ArenaGreen.copy(alpha = 0.6f), CircleShape)
                             ) {
                                 AsyncImage(
-                                    model = avatarUrl, contentDescription = "Avatar",
-                                    modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
+                                    model = avatarUrl,
+                                    contentDescription = "Avatar",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
                                 )
                             }
+
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
                                 text = user!!.username,
@@ -185,12 +218,12 @@ fun ProfileScreen(navController: NavController) {
                     item(span = { GridItemSpan(2) }) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Button(
-                                onClick = { /* Edit */ },
+                                onClick = { navController.navigate(Screen.EditProfile.route) },
                                 modifier = Modifier.weight(1f).height(45.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A1A1A)),
                                 shape = RoundedCornerShape(50)
                             ) {
-                                Text(stringResource(R.string.edit_profile), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium) // <--- TARJIMA
+                                Text(stringResource(R.string.edit_profile), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                             }
                             Button(
                                 onClick = { performLogout() },
@@ -198,7 +231,7 @@ fun ProfileScreen(navController: NavController) {
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A1A1A)),
                                 shape = RoundedCornerShape(50)
                             ) {
-                                Text(stringResource(R.string.log_out), color = ArenaRed, fontSize = 14.sp, fontWeight = FontWeight.Medium) // <--- TARJIMA
+                                Text(stringResource(R.string.log_out), color = ArenaRed, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                             }
                         }
                     }
@@ -222,7 +255,7 @@ fun ProfileScreen(navController: NavController) {
                     // 4. HISTORY TITLE
                     item(span = { GridItemSpan(2) }) {
                         Text(
-                            text = stringResource(R.string.challenge_history), // <--- TARJIMA
+                            text = stringResource(R.string.challenge_history),
                             color = Color.White,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
@@ -279,12 +312,10 @@ fun ProfileScreen(navController: NavController) {
     }
 }
 
-// --- STAT BOX ---
 @Composable
 fun RowScope.StatBox(resourceIdName: String, value: String, isGreen: Boolean = false, onClick: () -> Unit = {}) {
     val textColor = if (isGreen) ArenaGreen else Color.White
 
-    // String resursini aniqlash (Dynamic)
     val label = when(resourceIdName) {
         "followers" -> stringResource(R.string.followers)
         "following" -> stringResource(R.string.following)
@@ -310,7 +341,6 @@ fun RowScope.StatBox(resourceIdName: String, value: String, isGreen: Boolean = f
     }
 }
 
-// --- HISTORY CARD ---
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HistoryCard(
@@ -330,13 +360,16 @@ fun HistoryCard(
             .background(Color(0xFF111111))
             .border(1.dp, Color(0xFF222222), RoundedCornerShape(20.dp))
             .combinedClickable(
-                onClick = { /* Detail */ },
+                onClick = { },
                 onLongClick = onLongClick
             )
     ) {
         if (hasImage) {
+            // Video thumbnail fix
+            val imageUrl = if (challenge.proofUrl.endsWith(".mp4")) challenge.proofUrl.replace(".mp4", ".jpg") else challenge.proofUrl
+
             AsyncImage(
-                model = challenge.proofUrl,
+                model = imageUrl,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
@@ -366,8 +399,7 @@ fun HistoryCard(
     }
 }
 
-// Format
-fun formatNumber(count: Int): String {
+private fun formatNumber(count: Int): String {
     return when {
         count >= 1000000 -> String.format("%.1fM", count / 1000000.0)
         count >= 1000 -> String.format("%.1fK", count / 1000.0)

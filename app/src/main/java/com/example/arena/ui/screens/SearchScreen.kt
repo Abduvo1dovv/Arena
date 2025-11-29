@@ -4,7 +4,19 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -13,8 +25,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,7 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource // <-- MUHIM
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -31,13 +56,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.arena.R // <-- MUHIM
+import com.example.arena.R
 import com.example.arena.Screen
 import com.example.arena.model.Notification
 import com.example.arena.model.User
 import com.example.arena.ui.theme.ArenaBlack
 import com.example.arena.ui.theme.ArenaGreen
-import com.example.arena.ui.theme.ArenaRed
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -69,15 +93,22 @@ fun SearchScreen(navController: NavController) {
                     .orderBy("marketValue", Query.Direction.DESCENDING)
                     .limit(10)
                     .get().await()
-                trendingUsers = trendSnapshot.toObjects(User::class.java).filter { it.uid != currentUserId }
+                trendingUsers =
+                    trendSnapshot.toObjects(User::class.java).filter { it.uid != currentUserId }
                 isLoading = false
-            } catch (e: Exception) { e.printStackTrace() }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun investInUser(targetUser: User) {
         if (currentUserCoins < investmentCost) {
-            Toast.makeText(context, "INSUFFICIENT FUNDS! NEED $investmentCost COINS", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "INSUFFICIENT FUNDS! NEED $investmentCost COINS",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
         val db = FirebaseFirestore.getInstance()
@@ -90,10 +121,17 @@ fun SearchScreen(navController: NavController) {
         batch.update(targetRef, "marketValue", (targetUser.marketValue + 10.0))
 
         val notifRef = db.collection("notifications").document()
-        batch.set(notifRef, Notification(
-            id = notifRef.id, userId = targetUser.uid, senderId = currentUserId,
-            senderName = currentUserName, type = "INVEST", amount = 10.0, timestamp = System.currentTimeMillis()
-        ))
+        batch.set(
+            notifRef, Notification(
+                id = notifRef.id,
+                userId = targetUser.uid,
+                senderId = currentUserId,
+                senderName = currentUserName,
+                type = "INVEST",
+                amount = 10.0,
+                timestamp = System.currentTimeMillis()
+            )
+        )
 
         batch.commit().addOnSuccessListener {
             currentUserCoins -= investmentCost
@@ -109,8 +147,11 @@ fun SearchScreen(navController: NavController) {
                     .whereGreaterThanOrEqualTo("username", searchQuery)
                     .whereLessThanOrEqualTo("username", searchQuery + "\uf8ff")
                     .get().await()
-                searchResults = snapshot.toObjects(User::class.java).filter { it.uid != currentUserId }
-            } catch (e: Exception) { e.printStackTrace() }
+                searchResults =
+                    snapshot.toObjects(User::class.java).filter { it.uid != currentUserId }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             isLoading = false
         } else {
             searchResults = emptyList()
@@ -173,12 +214,21 @@ fun SearchScreen(navController: NavController) {
                             value = searchQuery,
                             onValueChange = { searchQuery = it },
                             singleLine = true,
-                            textStyle = TextStyle(color = Color.White, fontSize = 16.sp, fontFamily = FontFamily.Monospace),
+                            textStyle = TextStyle(
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily.Monospace
+                            ),
                             cursorBrush = SolidColor(ArenaGreen),
                             decorationBox = { innerTextField ->
                                 if (searchQuery.isEmpty()) {
                                     // SEARCH PLACEHOLDER (TARJIMA)
-                                    Text(stringResource(R.string.search), color = Color.Gray, fontSize = 16.sp, fontFamily = FontFamily.Monospace) // <--- R.string.search
+                                    Text(
+                                        stringResource(R.string.search),
+                                        color = Color.Gray,
+                                        fontSize = 16.sp,
+                                        fontFamily = FontFamily.Monospace
+                                    ) // <--- R.string.search
                                 }
                                 innerTextField()
                             },
@@ -210,7 +260,12 @@ fun SearchScreen(navController: NavController) {
                     item {
                         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                             // TOP GAINERS (TARJIMA)
-                            Text(stringResource(R.string.top_gainers), color = Color.Gray, fontSize = 12.sp, fontFamily = FontFamily.Monospace) // <--- R.string.top_gainers
+                            Text(
+                                stringResource(R.string.top_gainers),
+                                color = Color.Gray,
+                                fontSize = 12.sp,
+                                fontFamily = FontFamily.Monospace
+                            ) // <--- R.string.top_gainers
                             Spacer(modifier = Modifier.height(12.dp))
 
                             LazyRow(
@@ -226,7 +281,12 @@ fun SearchScreen(navController: NavController) {
 
                             Spacer(modifier = Modifier.height(32.dp))
                             // ALL LISTINGS (TARJIMA)
-                            Text(stringResource(R.string.all_listings), color = Color.Gray, fontSize = 12.sp, fontFamily = FontFamily.Monospace) // <--- R.string.all_listings
+                            Text(
+                                stringResource(R.string.all_listings),
+                                color = Color.Gray,
+                                fontSize = 12.sp,
+                                fontFamily = FontFamily.Monospace
+                            ) // <--- R.string.all_listings
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
@@ -244,7 +304,12 @@ fun SearchScreen(navController: NavController) {
                     // SEARCH RESULTS
                     if (isLoading) {
                         item {
-                            Box(modifier = Modifier.fillMaxWidth().padding(top = 50.dp), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 50.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 CircularProgressIndicator(color = ArenaGreen)
                             }
                         }
@@ -253,7 +318,13 @@ fun SearchScreen(navController: NavController) {
                             MarketUserRow(
                                 user = user,
                                 onInvest = { investInUser(user) },
-                                onClick = { navController.navigate(Screen.UserDetail.createRoute(user.uid)) }
+                                onClick = {
+                                    navController.navigate(
+                                        Screen.UserDetail.createRoute(
+                                            user.uid
+                                        )
+                                    )
+                                }
                             )
                             Divider(color = Color(0xFF222222), thickness = 0.5.dp)
                         }
@@ -268,7 +339,8 @@ fun SearchScreen(navController: NavController) {
 
 @Composable
 fun TrendingCard(user: User, onClick: () -> Unit) {
-    val avatarUrl = "https://api.dicebear.com/9.x/notionists/png?seed=${user.uid}&backgroundColor=00ff41"
+    val avatarUrl =
+        "https://api.dicebear.com/9.x/notionists/png?seed=${user.uid}&backgroundColor=00ff41"
 
     Card(
         modifier = Modifier
@@ -282,12 +354,17 @@ fun TrendingCard(user: User, onClick: () -> Unit) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize().padding(8.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
         ) {
             AsyncImage(
                 model = avatarUrl,
                 contentDescription = null,
-                modifier = Modifier.size(60.dp).clip(CircleShape).background(Color(0xFF222222)),
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF222222)),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -310,7 +387,8 @@ fun TrendingCard(user: User, onClick: () -> Unit) {
 
 @Composable
 fun MarketUserRow(user: User, onInvest: () -> Unit, onClick: () -> Unit) {
-    val avatarUrl = "https://api.dicebear.com/9.x/notionists/png?seed=${user.uid}&backgroundColor=00ff41"
+    val avatarUrl =
+        "https://api.dicebear.com/9.x/notionists/png?seed=${user.uid}&backgroundColor=00ff41"
     val percent = (user.marketValue / 100.0 * 5.0)
 
     Row(
@@ -325,7 +403,10 @@ fun MarketUserRow(user: User, onInvest: () -> Unit, onClick: () -> Unit) {
             AsyncImage(
                 model = avatarUrl,
                 contentDescription = null,
-                modifier = Modifier.size(40.dp).clip(CircleShape).background(Color(0xFF222222)),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF222222)),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -373,7 +454,12 @@ fun MarketUserRow(user: User, onInvest: () -> Unit, onClick: () -> Unit) {
                 modifier = Modifier.height(32.dp)
             ) {
                 // "BUY" ni ham string resursga o'tkazishingiz mumkin, hozircha shunday qoldirdim
-                Text(stringResource(R.string.invest), color = ArenaGreen, fontWeight = FontWeight.Bold, fontSize = 12.sp) // <--- R.string.invest (yoki buy)
+                Text(
+                    stringResource(R.string.invest),
+                    color = ArenaGreen,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp
+                ) // <--- R.string.invest (yoki buy)
             }
         }
     }

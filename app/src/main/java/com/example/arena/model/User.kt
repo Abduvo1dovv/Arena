@@ -8,5 +8,6 @@ data class User(
     val coins: Int = 0,
     val status: String = "ROOKIE",
     val followersCount: Int = 0,
-    val followingCount: Int = 0
+    val followingCount: Int = 0,
+    val avatarUrl: String = ""
 )

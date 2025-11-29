@@ -1,21 +1,44 @@
 package com.example.arena.ui.screens
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ChatBubbleOutline
 import androidx.compose.material.icons.rounded.NotificationsNone
 import androidx.compose.material.icons.rounded.Send
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -25,7 +48,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource // <-- MUHIM
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,7 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
-import com.example.arena.R // <-- MUHIM
+import com.example.arena.R
 import com.example.arena.Screen
 import com.example.arena.model.Challenge
 import com.example.arena.model.User
@@ -82,7 +105,10 @@ fun HomeScreen(navController: NavController) {
                         scope.launch {
                             marketValueAnim.animateTo(
                                 targetValue = user?.marketValue?.toFloat() ?: 0f,
-                                animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing)
+                                animationSpec = tween(
+                                    durationMillis = 1000,
+                                    easing = FastOutSlowInEasing
+                                )
                             )
                         }
                     }
@@ -134,19 +160,43 @@ fun HomeScreen(navController: NavController) {
             "RECURRING" -> {
                 val newDay = challenge.currentDay + 1
                 if (newDay > challenge.totalDays) {
-                    batch.update(challengeRef, mapOf("status" to "COMPLETED", "proofUrl" to proofUrl, "currentDay" to newDay))
-                    batch.update(db.collection("users").document(uid), mapOf("coins" to com.google.firebase.firestore.FieldValue.increment(challenge.rewardAmount.toLong()), "marketValue" to com.google.firebase.firestore.FieldValue.increment(challenge.totalDays * 0.5)))
+                    batch.update(
+                        challengeRef,
+                        mapOf(
+                            "status" to "COMPLETED",
+                            "proofUrl" to proofUrl,
+                            "currentDay" to newDay
+                        )
+                    )
+                    batch.update(
+                        db.collection("users").document(uid),
+                        mapOf(
+                            "coins" to com.google.firebase.firestore.FieldValue.increment(challenge.rewardAmount.toLong()),
+                            "marketValue" to com.google.firebase.firestore.FieldValue.increment(
+                                challenge.totalDays * 0.5
+                            )
+                        )
+                    )
                 } else {
-                    batch.update(challengeRef, mapOf("currentDay" to newDay, "lastProofUrl" to proofUrl, "lastProofTime" to System.currentTimeMillis()))
+                    batch.update(
+                        challengeRef,
+                        mapOf(
+                            "currentDay" to newDay,
+                            "lastProofUrl" to proofUrl,
+                            "lastProofTime" to System.currentTimeMillis()
+                        )
+                    )
                 }
             }
+
             "SINGLE" -> {
                 batch.update(challengeRef, mapOf("status" to "PENDING", "proofUrl" to proofUrl))
             }
         }
         batch.commit().addOnSuccessListener {
             // Bu yerdagi Textni ham kelajakda context.getString() bilan olish mumkin, lekin hozircha Toast.
-            val msg = if (challenge.type == "RECURRING" && challenge.currentDay < challenge.totalDays) "DAY COMPLETED! KEEP GOING!" else "SENT TO TRIBUNAL!"
+            val msg =
+                if (challenge.type == "RECURRING" && challenge.currentDay < challenge.totalDays) "DAY COMPLETED! KEEP GOING!" else "SENT TO TRIBUNAL!"
             android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
         }
     }
@@ -154,7 +204,10 @@ fun HomeScreen(navController: NavController) {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME && ProofManager.capturedData != null) {
-                submitProofToTribunal(ProofManager.capturedData!!.first, ProofManager.capturedData!!.second)
+                submitProofToTribunal(
+                    ProofManager.capturedData!!.first,
+                    ProofManager.capturedData!!.second
+                )
                 ProofManager.capturedData = null
             }
         }
@@ -264,9 +317,22 @@ fun HomeScreen(navController: NavController) {
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Row {
-                                        Text(text = stringResource(R.string.last_30_days), color = Color.Gray, fontSize = 12.sp) // <--- TARJIMA
-                                        Text(text = "+${String.format("%.1f", (user?.marketValue ?: 0.0) / 20)}%",
-                                            color = ArenaGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                        Text(
+                                            text = stringResource(R.string.last_30_days),
+                                            color = Color.Gray,
+                                            fontSize = 12.sp
+                                        ) // <--- TARJIMA
+                                        Text(
+                                            text = "+${
+                                                String.format(
+                                                    "%.1f",
+                                                    (user?.marketValue ?: 0.0) / 20
+                                                )
+                                            }%",
+                                            color = ArenaGreen,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
                             }
@@ -279,9 +345,30 @@ fun HomeScreen(navController: NavController) {
 
                                 val path = Path().apply {
                                     moveTo(0f, height * 0.8f)
-                                    cubicTo(width * 0.1f, height * 0.4f, width * 0.2f, height * 0.4f, width * 0.3f, height * 0.7f)
-                                    cubicTo(width * 0.4f, height * 0.9f, width * 0.5f, height * 0.5f, width * 0.6f, height * 0.6f)
-                                    cubicTo(width * 0.7f, height * 0.7f, width * 0.8f, height * 0.2f, width * 0.9f, height * 0.4f)
+                                    cubicTo(
+                                        width * 0.1f,
+                                        height * 0.4f,
+                                        width * 0.2f,
+                                        height * 0.4f,
+                                        width * 0.3f,
+                                        height * 0.7f
+                                    )
+                                    cubicTo(
+                                        width * 0.4f,
+                                        height * 0.9f,
+                                        width * 0.5f,
+                                        height * 0.5f,
+                                        width * 0.6f,
+                                        height * 0.6f
+                                    )
+                                    cubicTo(
+                                        width * 0.7f,
+                                        height * 0.7f,
+                                        width * 0.8f,
+                                        height * 0.2f,
+                                        width * 0.9f,
+                                        height * 0.4f
+                                    )
                                     lineTo(width, height * 0.3f)
                                 }
 
@@ -300,7 +387,10 @@ fun HomeScreen(navController: NavController) {
                                 drawPath(
                                     path = fillPath,
                                     brush = Brush.verticalGradient(
-                                        colors = listOf(ArenaGreen.copy(alpha = 0.2f), Color.Transparent),
+                                        colors = listOf(
+                                            ArenaGreen.copy(alpha = 0.2f),
+                                            Color.Transparent
+                                        ),
                                         startY = 0f,
                                         endY = height
                                     )
@@ -328,7 +418,11 @@ fun HomeScreen(navController: NavController) {
                                 .padding(vertical = 40.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(stringResource(R.string.no_active_challenges), color = Color.Gray, fontSize = 14.sp) // <--- TARJIMA
+                            Text(
+                                stringResource(R.string.no_active_challenges),
+                                color = Color.Gray,
+                                fontSize = 14.sp
+                            ) // <--- TARJIMA
                         }
                     }
                 } else {

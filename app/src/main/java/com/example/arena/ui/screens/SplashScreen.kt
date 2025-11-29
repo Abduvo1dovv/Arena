@@ -4,9 +4,18 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,8 +42,7 @@ fun SplashScreen(navController: NavController) {
     LaunchedEffect(key1 = true) {
         // 1. Asta-sekin paydo bo'lish (1.5 soniya)
         alpha.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 2500)
+            targetValue = 1f, animationSpec = tween(durationMillis = 2500)
         )
 
         // 2. Ekranda ozgina ushlab turish (0.5 soniya)

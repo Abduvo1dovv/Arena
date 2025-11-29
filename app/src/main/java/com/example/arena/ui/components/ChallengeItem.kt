@@ -2,13 +2,27 @@ package com.example.arena.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Timer
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,9 +70,19 @@ fun ChallengeItem(
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Timer, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
+                    Icon(
+                        Icons.Rounded.Timer,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.size(14.dp)
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = timeLeft, color = Color.Gray, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                    Text(
+                        text = timeLeft,
+                        color = Color.Gray,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
                 }
             }
 
@@ -82,9 +106,19 @@ fun ChallengeItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    Text("REWARD POOL", color = Color.Gray, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                    Text(
+                        "REWARD POOL",
+                        color = Color.Gray,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Rounded.Bolt, contentDescription = null, tint = ArenaGreen, modifier = Modifier.size(16.dp))
+                        Icon(
+                            Icons.Rounded.Bolt,
+                            contentDescription = null,
+                            tint = ArenaGreen,
+                            modifier = Modifier.size(16.dp)
+                        )
                         Text(
                             text = "+${challenge.rewardAmount}",
                             color = ArenaGreen,
@@ -104,9 +138,19 @@ fun ChallengeItem(
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.height(40.dp)
                     ) {
-                        Icon(Icons.Default.CheckCircle, contentDescription = null, tint = ArenaBlack, modifier = Modifier.size(16.dp))
+                        Icon(
+                            Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = ArenaBlack,
+                            modifier = Modifier.size(16.dp)
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("DONE", color = ArenaBlack, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(
+                            "DONE",
+                            color = ArenaBlack,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
                     }
                 } else {
                     // Tugma o'rniga shunchaki status

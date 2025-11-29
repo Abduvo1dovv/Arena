@@ -15,6 +15,8 @@ sealed class Screen(val route: String) {
     object Notifications : Screen("notifications_screen")
     object Leaderboard : Screen("leaderboard_screen")
 
+    object EditProfile : Screen("edit_profile_screen")
+
     object Inbox : Screen("inbox_screen")
     object Feed : Screen("feed_screen")
 

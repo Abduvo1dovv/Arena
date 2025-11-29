@@ -92,4 +92,11 @@
     <string name="list_empty">RO‘YXAT BO‘SH</string>
     <string name="remove">O‘CHIRISH</string>
     <string name="btn_following">KUZATYAPSIZ</string>
+
+    <string name="change_photo">Rasmni o\'zgartirish</string>
+    <string name="username">Foydalanuvchi nomi</string>
+    <string name="save_changes">SAQLASH</string>
+    <string name="saving">SAQLANMOQDA...</string>
+    <string name="profile_updated">Profil yangilandi!</string>
+    <string name="upload_error">Yuklashda xatolik</string>
 </resources>

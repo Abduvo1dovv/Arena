@@ -16,10 +16,25 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.arena.ui.components.ArenaBottomBar
-import com.example.arena.ui.screens.*
+import com.example.arena.ui.screens.ChatScreen
+import com.example.arena.ui.screens.CreateChallengeScreen
+import com.example.arena.ui.screens.EditProfileScreen
+import com.example.arena.ui.screens.FeedScreen
+import com.example.arena.ui.screens.HomeScreen
+import com.example.arena.ui.screens.InboxScreen
+import com.example.arena.ui.screens.LeaderboardScreen
+import com.example.arena.ui.screens.LoginScreen
+import com.example.arena.ui.screens.NotificationsScreen
+import com.example.arena.ui.screens.ProfileScreen
+import com.example.arena.ui.screens.ProofCameraScreen
+import com.example.arena.ui.screens.SearchScreen
+import com.example.arena.ui.screens.SettingsScreen
+import com.example.arena.ui.screens.SignUpScreen
+import com.example.arena.ui.screens.SplashScreen
+import com.example.arena.ui.screens.UserDetailScreen
+import com.example.arena.ui.screens.UserListScreen
 import com.example.arena.ui.theme.ARENATheme
 import com.example.arena.ui.theme.ArenaBlack
-import java.io.File
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,6 +137,10 @@ class MainActivity : FragmentActivity() {
                         }
                         composable(Screen.Settings.route) {
                             SettingsScreen(navController)
+                        }
+
+                        composable(Screen.EditProfile.route) {
+                            EditProfileScreen(navController)
                         }
                     }
                 }
